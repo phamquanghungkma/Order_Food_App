@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "420764223962",
+    "firebase_url": "https://orderapp-71a6c.firebaseio.com",
+    "project_id": "orderapp-71a6c",
+    "storage_bucket": "orderapp-71a6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420764223962:android:ef914c6637e9479ef718e3",
+        "android_client_info": {
+          "package_name": "com.tofukma.orderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420764223962-f03ljn0vvm4p0u1drk6mbje8skka2f0t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ-whQ2bQy_-Y-e1THjxRBjTL5arazNnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420764223962-f03ljn0vvm4p0u1drk6mbje8skka2f0t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
