@@ -14,9 +14,11 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="menu_food_detail">Food Detail</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_food_list">Food List</string>
     <string name="popular_categories">Popular Categories</string>
     <string name="best_deals">Best Deals</string>
+    <string name="menu_category">Categories</string>
+
 
 
 </resources>
