@@ -1,10 +1,13 @@
 package com.tofukma.orderapp.Common
 
 import com.tofukma.orderapp.Model.CategoryModel
+import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.Model.UserModel
 
 object Common {
 
+    val COMMENT_REF: String = "Comments"
+    var foodSelected:FoodModel ?= null
     var categorySelected: CategoryModel ?= null
     val CATEGORY_REF: String = "Category"
     val FULL_WIDTH_COLUMN: Int = 1

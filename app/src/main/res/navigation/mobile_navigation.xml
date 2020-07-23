@@ -25,8 +25,8 @@
         tools:layout="@layout/fragment_food_list" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.tofukma.orderapp.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_food_list"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_food_detail"
+        android:name="com.tofukma.orderapp.ui.fooddetail.FoodDetailFragment"
+        android:label="@string/menu_food_detail"
+        tools:layout="@layout/fragment_food_detail" />
 </navigation>

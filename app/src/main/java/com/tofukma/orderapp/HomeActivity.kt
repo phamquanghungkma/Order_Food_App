@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.tofukma.orderapp.EventBus.CategoryClick
+import com.tofukma.orderapp.EventBus.FoodItemClick
 import com.tofukma.orderapp.Model.CategoryModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -42,7 +43,7 @@ class HomeActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_menu, R.id.nav_slideshow
+                R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -76,6 +77,15 @@ class HomeActivity : AppCompatActivity() {
 //            Toast.makeText(this,"Click to " +event.category.name,Toast.LENGTH_SHORT).show()
 
             findNavController(R.id.nav_host_fragment).navigate(R.id.nav_food_list)
+        }
+    }
+
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    fun onFoodSelected(event: FoodItemClick){
+        if(event.isSuccess){
+//            Toast.makeText(this,"Click to " +event.category.name,Toast.LENGTH_SHORT).show()
+
+            findNavController(R.id.nav_host_fragment).navigate(R.id.nav_food_detail)
         }
     }
 }
