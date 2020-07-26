@@ -18,6 +18,7 @@ import com.tofukma.orderapp.Common.Common
 import com.tofukma.orderapp.Model.CommentModel
 import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.ui.comment.CommentFragment
 import dmax.dialog.SpotsDialog
 import java.lang.StringBuilder
 
@@ -113,8 +114,6 @@ class FoodDetailFragment : Fragment() {
 
                                 }
                             }
-
-
                     }
                     else
                         waitingDialog!!.dismiss()
@@ -151,6 +150,10 @@ class FoodDetailFragment : Fragment() {
         btnRating!!.setOnClickListener {
             showDialogRating()
 
+        }
+        btnShowComment!!.setOnClickListener{
+            val commentFragment = CommentFragment.getInstance()
+            commentFragment.show(activity!!.supportFragmentManager,"CommentFragment")
         }
 
     }
