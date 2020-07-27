@@ -10,7 +10,7 @@ object Common {
     fun formatPrice(price: Double): Any {
         if(price != 0.toDouble())
         {
-            val df = DecimalFormat("#,##0.0")
+            val df = DecimalFormat("#,##0")
             df.roundingMode = RoundingMode.HALF_UP
             val finalPrice = StringBuffer(df.format(price)).toString()
             return finalPrice.replace(".",",")

@@ -2,6 +2,7 @@ package com.tofukma.orderapp.ui.fooddetail
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -165,9 +166,9 @@ class FoodDetailFragment : Fragment() {
         var totalPrice = Common.foodSelected!!.price.toDouble()
         var displayPrice = 0.0
 
-        //Size
-        totalPrice += Common.foodSelected!!.userSelectedSize!!.price!!.toDouble()
-
+        //Sizenumber_buttonuserSelecLOGAAAtedSize
+        totalPrice +=(1000*Common.foodSelected!!.userSelectedSize!!.price!!.toDouble())
+        Log.e("TotalPrice =>>>>>", totalPrice!!.toString())
         displayPrice = totalPrice * number_button!!.number.toInt()
         displayPrice = Math.round(displayPrice * 100.0)/100.0
 
