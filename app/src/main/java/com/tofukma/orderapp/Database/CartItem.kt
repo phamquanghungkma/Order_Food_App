@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Cart",primaryKeys = ["uid","foodId","foodSize","foodAddon"])
 class CartItem {
 
-
     @ColumnInfo(name = "foodId")
     var foodId:String =""
 
@@ -27,6 +26,7 @@ class CartItem {
     @ColumnInfo(name="foodAddon")
     var foodAddon:String?=null
 
+    @NonNull
     @ColumnInfo(name="foodSize")
     var foodSize:String?=null
 
@@ -46,7 +46,9 @@ class CartItem {
         if(other !is CartItem)
             return false
         val cartItem = other as CartItem?
-        return cartItem!!.foodId ==this.foodId && cartItem.foodAddon == this.foodAddon && cartItem.foodSize == this.foodSize
+        return cartItem!!.foodId ==this.foodId &&
+                cartItem.foodAddon == this.foodAddon &&
+                cartItem.foodSize == this.foodSize
 
     }
 }

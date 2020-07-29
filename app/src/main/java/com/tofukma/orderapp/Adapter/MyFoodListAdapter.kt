@@ -93,13 +93,12 @@ class MyFoodListAdapter (internal var context: Context,
         holder.txt_food_price!!.setText(foodList.get(position).price.toString())
 
         // Event
-        holder.setListener(object : IRecyclerItemClickListener {
+        holder.setListener(object:IRecyclerItemClickListener {
             override fun onItemClick(view: View, post: Int) {
                 Common.foodSelected = foodList.get(post)
                 Common.foodSelected!!.key = post.toString()
                 EventBus.getDefault().postSticky(FoodItemClick(true, foodList.get(post)))
             }
-
 
         })
 
@@ -164,8 +163,7 @@ class MyFoodListAdapter (internal var context: Context,
                                    .subscribeOn(Schedulers.io())
                                    .observeOn(AndroidSchedulers.mainThread())
                                    .subscribe({
-                                       Toast.makeText(
-                                           context,
+                                       Toast.makeText(context,
                                            "Thêm hàng thành công",
                                            Toast.LENGTH_SHORT
                                        ).show()
@@ -177,12 +175,11 @@ class MyFoodListAdapter (internal var context: Context,
                                            "(Thêm hàng)" + t!!.message,
                                            Toast.LENGTH_SHORT
                                        ).show()
-                                   }
-                                   )
-                           )
-                       }
-                   }
+                                   }))
 
+
+                        }
+                   }
                    override fun onError(e: Throwable) {
                        if(e.message!!.contains("empty")){
                            compositeDisposable.add(
@@ -202,18 +199,16 @@ class MyFoodListAdapter (internal var context: Context,
                           Toast.makeText(context,"[Giỏ hàng lỗi]"+e.message,Toast.LENGTH_SHORT).show()
                        }
                }
-
                    override fun onSubscribe(d: Disposable) {
-                       TODO("Not yet implemented")
+3
                    }
 
                })
         }
-        fun onStop(){
-            if(compositeDisposable !=null)
-                compositeDisposable.clear()
-        }
+    }
 
-
+    fun onStop(){
+        if(compositeDisposable !=null)
+            compositeDisposable.clear()
     }
 }
