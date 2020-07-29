@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
 import com.tofukma.orderapp.Common.Common
 import com.tofukma.orderapp.Common.SpacesItemDecoration
@@ -58,6 +59,7 @@ class MenuFragment : Fragment() {
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(context,R.anim.layout_item_from_left)
         recycler_menu = root.findViewById(R.id.recycler_menu) as RecyclerView
         recycler_menu!!.setHasFixedSize(true)
+        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2,RecyclerView.VERTICAL)
         val layoutManager = GridLayoutManager(context,2)
         layoutManager.orientation = RecyclerView.VERTICAL
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -74,7 +76,8 @@ class MenuFragment : Fragment() {
                 }
             }
         }
-        recycler_menu!!.layoutManager = layoutManager
+//        recycler_menu!!.layoutManager = layoutManager
+        recycler_menu!!.layoutManager = staggeredGridLayoutManager
         recycler_menu!!.addItemDecoration(
             SpacesItemDecoration(
                 8
