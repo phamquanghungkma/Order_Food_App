@@ -274,6 +274,7 @@
                 android:text="Show Comment"
                 android:textColor="@android:color/white"
                 app:cornerRadius = "4dp"
+                android:background="@color/colorAccent"
                 />
 
 
