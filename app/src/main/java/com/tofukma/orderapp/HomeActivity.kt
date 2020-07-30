@@ -1,7 +1,13 @@
 package com.tofukma.orderapp
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
+import android.widget.MediaController
+import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -14,16 +20,25 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.tofukma.orderapp.Common.Common
 import com.tofukma.orderapp.EventBus.CategoryClick
 import com.tofukma.orderapp.EventBus.FoodItemClick
 import com.tofukma.orderapp.Model.CategoryModel
+import kotlinx.android.synthetic.main.layout_category_item.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import javax.sql.CommonDataSource
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var carDataSource: CommonDataSource
+    private lateinit var navController: NavController
+    private  var drawer : DrawerLayout?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,18 +51,69 @@ class HomeActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        drawer = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
+        navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail
-            ), drawerLayout
+                R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail,
+                R.id.nav_cart
+            ), drawer
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        var headerView = navView.getHeaderView(0)
+        var txt_user = headerView.findViewById<TextView>(R.id.txt_user)
+        Common.setSpanString("Hey, ", Common.currentUser!!.name, txt_user)
+
+        navView.setNavigationItemSelectedListener(object:NavigationView.OnNavigationItemSelectedListener{
+            override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+
+                p0.isChecked = true
+                drawer!!.closeDrawers()
+                if (p0.itemId == R.id.nav_sign_out)
+                {
+                    singOut()
+                }
+                else if(p0.itemId == R.id.nav_home)
+                {
+                    navController.navigate(R.id.nav_home)
+                }
+                else if(p0.itemId == R.id.nav_cart)
+                {
+                    navController.navigate(R.id.nav_cart)
+                }
+                else if(p0.itemId == R.id.nav_menu)
+                {
+                    navController.navigate(R.id.nav_menu)
+                }
+                return true
+            }
+        })
+    }
+
+    private fun singOut() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        Log.e("Check" , builder.toString() )
+        builder.setTitle("Sing Out")
+            .setMessage("Do you realy want to exit?")
+            .setNegativeButton("CANEL", {dialogInterface, _ -> dialogInterface.dismiss() })
+            .setPositiveButton("OKE"){ dialogInterface, _ ->
+                Common.foodSelected = null
+                Common.categorySelected = null
+                Common.currentUser = null
+                FirebaseAuth.getInstance().signOut()
+
+                val intent = Intent(this@HomeActivity , MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

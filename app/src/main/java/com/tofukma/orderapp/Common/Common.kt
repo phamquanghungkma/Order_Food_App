@@ -1,5 +1,11 @@
 package com.tofukma.orderapp.Common
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
+import android.widget.TextView
 import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.Model.UserModel
@@ -17,6 +23,17 @@ object Common {
         }else
             return "0,00"
     }
+
+    fun setSpanString(welcome: String, name: String?, txtUser: TextView?) {
+        val builder = SpannableStringBuilder()
+        builder.append(welcome)
+        val txtSpannable = SpannableString(name)
+        val boldSpan = StyleSpan(Typeface.BOLD)
+        txtSpannable.setSpan(boldSpan,0, name!!.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        builder.append(txtSpannable)
+        txtUser!!.setText(builder,TextView.BufferType.SPANNABLE)
+    }
+
 
     val COMMENT_REF: String = "Comments"
     var foodSelected:FoodModel ?= null
