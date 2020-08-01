@@ -156,7 +156,8 @@ class MyFoodListAdapter (internal var context: Context,
                                    }
 
                                })
-                   } else{
+                   }
+                       else{
                            //if item not available in databse , just insert
                            compositeDisposable.add(
                                cartDataSource.insertOrReplaceAll(cartItem)
@@ -176,8 +177,6 @@ class MyFoodListAdapter (internal var context: Context,
                                            Toast.LENGTH_SHORT
                                        ).show()
                                    }))
-
-
                         }
                    }
                    override fun onError(e: Throwable) {

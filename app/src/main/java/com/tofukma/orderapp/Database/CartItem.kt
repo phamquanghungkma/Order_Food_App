@@ -42,7 +42,7 @@ class CartItem {
     var uid:String?=""
 
     override fun equals(other: Any?): Boolean {
-        if (other == this) return true
+        if (other === this) return true
         if(other !is CartItem)
             return false
         val cartItem = other as CartItem?

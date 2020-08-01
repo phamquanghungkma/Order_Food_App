@@ -1,8 +1,7 @@
 package com.tofukma.orderapp.Common
 
-import com.tofukma.orderapp.Model.CategoryModel
-import com.tofukma.orderapp.Model.FoodModel
-import com.tofukma.orderapp.Model.UserModel
+import com.tofukma.orderapp.Model.*
+import kotlinx.android.synthetic.main.fragment_food_detail.view.*
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -17,6 +16,27 @@ object Common {
         }else
             return "0,00"
     }
+
+    fun calcutaleExtraPrice(userSelectedSize: SizeModel?, userSelectedAddon: MutableList<AddonModel>?): Double {
+    var result:Double =0.0
+        if (userSelectedSize == null && userSelectedAddon == null)
+            return 0.0
+        else if(userSelectedSize == null){
+            for (addonModel in userSelectedAddon!!)
+                result += addonModel.price!!.toDouble()
+            return result
+        }
+        else if(userSelectedAddon == null){
+                result = userSelectedSize!!.price!!.toDouble()
+                return result
+        }else{
+            result = userSelectedSize!!.price!!.toDouble()
+            for (addonModel in userSelectedAddon!!)
+                result += addonModel.price!!.toDouble()
+            return result
+        }
+    }
+
 
     val COMMENT_REF: String = "Comments"
     var foodSelected:FoodModel ?= null
