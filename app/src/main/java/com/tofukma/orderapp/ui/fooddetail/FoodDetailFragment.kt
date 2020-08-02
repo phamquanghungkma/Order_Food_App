@@ -73,16 +73,16 @@ class FoodDetailFragment : Fragment(), TextWatcher {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        /*foodDetailViewModel =
+        foodDetailViewModel =
             ViewModelProviders.of(this).get(FoodDetailViewModel::class.java)
-        initViews(root)
         foodDetailViewModel.getMutableLiveDataFood().observe(viewLifecycleOwner, Observer {
             displayInfo(it)
         })
         foodDetailViewModel.getMutableLiveDataComment().observe(this, Observer {
             submitRatingToFirebase(it)
-        })*/
+        })
         val root = inflater.inflate(R.layout.fragment_food_detail, container, false)
+        initViews(root)
         return root
     }
 
@@ -113,9 +113,6 @@ class FoodDetailFragment : Fragment(), TextWatcher {
             }
         }
     }
-
-
-
 
 
     private fun submitRatingToFirebase(commentModel: CommentModel?) {
@@ -283,6 +280,7 @@ class FoodDetailFragment : Fragment(), TextWatcher {
             commentFragment.show(activity!!.supportFragmentManager, "CommentFragment")
         }
         btnCart!!.setOnClickListener {
+            Log.d("CHECKKK", "btnCart onClick")
             val cartItem = CartItem()
             cartItem.uid = Common.currentUser!!.uid
             cartItem.userPhone = Common.currentUser!!.phone
@@ -295,132 +293,136 @@ class FoodDetailFragment : Fragment(), TextWatcher {
                 Common.foodSelected!!.userSelectedSize,
                 Common.foodSelected!!.userSelectedAddon
             )
+
             if (Common.foodSelected!!.userSelectedAddon != null)
                 cartItem.foodAddon = Gson().toJson(Common.foodSelected!!.userSelectedAddon)
             else
                 cartItem.foodAddon = "Default"
+
             if (Common.foodSelected!!.userSelectedSize != null)
                 cartItem.foodSize = Gson().toJson(Common.foodSelected!!.userSelectedSize)
             else {
                 cartItem.foodSize = "Default"
+            }
 
+            cartDataSource.getItemWithAllOptionsInCart(
+                Common.currentUser!!.uid!!,
+                cartItem.foodId,
+                cartItem.foodSize!!,
+                cartItem.foodAddon!!
+            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : SingleObserver<CartItem> {
+                    override fun onSuccess(cartItemFromDB: CartItem) {
+                        Log.d("CHECKKK", "getItem onSuccess")
+                        if (cartItemFromDB.equals(cartItem)) {
+                            //if item alreadly in database just update
+                            cartItemFromDB.foodExtraPrice = cartItem.foodExtraPrice
+                            cartItemFromDB.foodAddon = cartItem.foodAddon
+                            cartItemFromDB.foodSize = cartItem.foodSize
+                            cartItemFromDB.foodQuantity =
+                                cartItemFromDB.foodQuantity + cartItem.foodQuantity
+                            cartDataSource.updatecart(cartItemFromDB)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(object : SingleObserver<Int> {
+                                    override fun onSuccess(t: Int) {
+                                        Log.d("CHECKKK", "updateCart onSuccess")
+                                        Toast.makeText(
+                                            context,
+                                            "Cập nhật giỏ hàng thành công",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        EventBus.getDefault().postSticky(CountCartEvent(true))
+                                    }
 
-                cartDataSource.getItemWithAllOptionsInCart(
-                    Common.currentUser!!.uid!!,
-                    cartItem.foodId,
-                    cartItem.foodSize!!,
-                    cartItem.foodAddon!!
-                )
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(object : SingleObserver<CartItem> {
-                        override fun onSuccess(cartItemFromDB: CartItem) {
-                            if (cartItemFromDB.equals(cartItem)) {
-                                //if item alreadly in database just update
-                                cartItemFromDB.foodExtraPrice = cartItem.foodExtraPrice
-                                cartItemFromDB.foodAddon = cartItem.foodAddon
-                                cartItemFromDB.foodSize = cartItem.foodSize
-                                cartItemFromDB.foodQuantity =
-                                    cartItemFromDB.foodQuantity + cartItem.foodQuantity
-                                cartDataSource.updatecart(cartItemFromDB)
+                                    override fun onSubscribe(d: Disposable) {
+
+                                    }
+
+                                    override fun onError(e: Throwable) {
+                                        Log.d("CHECKKK", "updateCart onError")
+                                        Toast.makeText(
+                                            context,
+                                            "Cập nhật giỏ hàng" + e.message!!,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                })
+                        } else {
+                            //if item not available in databse , just insert
+                            compositeDisposable.add(
+                                cartDataSource.insertOrReplaceAll(cartItem)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(object : SingleObserver<Int> {
-                                        override fun onSuccess(t: Int) {
-                                            Toast.makeText(
-                                                context,
-                                                "Cập nhật giỏ hàng thành công",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                            EventBus.getDefault().postSticky(CountCartEvent(true))
-                                        }
-
-                                        override fun onSubscribe(d: Disposable) {
-
-                                        }
-
-                                        override fun onError(e: Throwable) {
-                                            Toast.makeText(
-                                                context,
-                                                "Cập nhật giỏ hàng" + e.message!!,
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-
+                                    .subscribe({
+                                        Toast.makeText(
+                                            context,
+                                            "Thêm hàng thành công",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        //Here we will send a notify to HomeActivity to update CounterFab
+                                        EventBus.getDefault().postSticky(CountCartEvent(true))
+                                    }, { t: Throwable? ->
+                                        Toast.makeText(
+                                            context,
+                                            "(Thêm hàng)" + t!!.message,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     })
-                            } else {
-                                //if item not available in databse , just insert
-                                compositeDisposable.add(
-                                    cartDataSource.insertOrReplaceAll(cartItem)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe({
-                                            Toast.makeText(
-                                                context,
-                                                "Thêm hàng thành công",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                            //Here we will send a notify to HomeActivity to update CounterFab
-                                            EventBus.getDefault().postSticky(CountCartEvent(true))
-                                        }, { t: Throwable? ->
-                                            Toast.makeText(
-                                                context,
-                                                "(Thêm hàng)" + t!!.message,
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        })
-                                )
+                            )
 
 
-                            }
                         }
+                    }
 
-                        override fun onError(e: Throwable) {
-                            if (e.message!!.contains("empty")) {
-                                compositeDisposable.add(
-                                    cartDataSource.insertOrReplaceAll(cartItem)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe({
-                                            Toast.makeText(
-                                                context,
-                                                "Thêm hàng thành công",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                            //Here we will send a notify to HomeActivity to update CounterFab
-                                            EventBus.getDefault().postSticky(CountCartEvent(true))
-                                        }, { t: Throwable? ->
-                                            Toast.makeText(
-                                                context,
-                                                "(Thêm hàng)" + t!!.message,
-                                                Toast.LENGTH_SHORT
-                                            )
-                                                .show()
-                                        })
+                    override fun onError(e: Throwable) {
+                        Log.d("CHECKKK", "onError1")
+                        if (e.message!!.contains("empty")) {
+                            compositeDisposable.add(
+                                cartDataSource.insertOrReplaceAll(cartItem)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({
+                                        Toast.makeText(
+                                            context,
+                                            "Thêm hàng thành công",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        //Here we will send a notify to HomeActivity to update CounterFab
+                                        EventBus.getDefault().postSticky(CountCartEvent(true))
+                                    }, { t: Throwable? ->
+                                        Toast.makeText(
+                                            context,
+                                            "(Thêm hàng)" + t!!.message,
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    })
 
-                                )
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "[Giỏ hàng lỗi]" + e.message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                            )
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "[Giỏ hàng lỗi]" + e.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+                    }
 
-                        override fun onSubscribe(d: Disposable) {
-                            3
-                        }
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d("CHECKKK", "onSubscribe")
+                    }
 
-                    })
-
-
-            }
+                })
 
 
         }
 
     }
+
 
     private fun displayAlladdon() {
         if (Common.foodSelected!!.addon!!.size > 0) {
@@ -452,9 +454,14 @@ class FoodDetailFragment : Fragment(), TextWatcher {
             chip_group_user_selected_addon!!.removeAllViews()
             for (addonModel in Common.foodSelected!!.userSelectedAddon!!) {
                 val chip =
-                    layoutInflater.inflate(R.layout.layout_chip_with_delete, null, false) as Chip
-                chip.text = StringBuilder(addonModel.name).append("(+$").append(addonModel.price)
-                    .append(",000)").toString()
+                    layoutInflater.inflate(
+                        R.layout.layout_chip_with_delete,
+                        null,
+                        false
+                    ) as Chip
+                chip.text =
+                    StringBuilder(addonModel.name).append("(+$").append(addonModel.price)
+                        .append(",000)").toString()
                 chip.isCheckable = false
                 chip.setOnCloseIconClickListener { view ->
                     chip_group_user_selected_addon!!.removeView(view)
@@ -472,7 +479,8 @@ class FoodDetailFragment : Fragment(), TextWatcher {
         builder.setTitle("Rating Food")
         builder.setMessage("Please fill information")
 
-        val itemView = LayoutInflater.from(context).inflate(R.layout.layout_rating_comment, null)
+        val itemView =
+            LayoutInflater.from(context).inflate(R.layout.layout_rating_comment, null)
         val ratingBar = itemView.findViewById<RatingBar>(R.id.rating_bar)
         val edt_comment = itemView.findViewById<EditText>(R.id.edt_comment)
 

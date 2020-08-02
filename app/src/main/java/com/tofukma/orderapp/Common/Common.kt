@@ -17,7 +17,8 @@ object Common {
             return "0,00"
     }
 
-    fun calcutaleExtraPrice(userSelectedSize: SizeModel?, userSelectedAddon: MutableList<AddonModel>?): Double {
+    fun calcutaleExtraPrice(userSelectedSize: SizeModel?,
+                            userSelectedAddon: MutableList<AddonModel>?): Double {
     var result:Double =0.0
         if (userSelectedSize == null && userSelectedAddon == null)
             return 0.0
