@@ -155,19 +155,13 @@ class MainActivity : AppCompatActivity() {
                         ).show()
 
                         gotoHomeActivity(userModel)
-
                     }
                 }
-
-
         })
-
         //Importan please show dialog
         val dialog = builder.create()
         dialog.show()
-
-
-    }
+}
 
     private fun gotoHomeActivity(userModel: UserModel?) {
         Common.currentUser = userModel!!

@@ -24,10 +24,23 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Common.Common.currentUser
+import com.tofukma.orderapp.Database.CartDataSource
+import com.tofukma.orderapp.Database.CartDatabase
+import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.CategoryClick
+import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.EventBus.FoodItemClick
 import com.tofukma.orderapp.Model.CategoryModel
 import kotlinx.android.synthetic.main.layout_category_item.*
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.SingleObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers.io
+import kotlinx.android.synthetic.main.app_bar_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -39,10 +52,17 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var carDataSource: CommonDataSource
     private lateinit var navController: NavController
     private  var drawer : DrawerLayout?=null
+    private lateinit var cartDataSource: CartDataSource
+
+    override fun onResume(){
+        super.onResume()
+//        countCartItem()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        cartDataSource = LocalCartDataSource(CartDatabase.getInstance(this).cartDAO())
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -93,6 +113,8 @@ class HomeActivity : AppCompatActivity() {
                 return true
             }
         })
+
+//        countCartItem()
     }
 
     private fun singOut() {
@@ -154,4 +176,34 @@ class HomeActivity : AppCompatActivity() {
             findNavController(R.id.nav_host_fragment).navigate(R.id.nav_food_detail)
         }
     }
+
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    fun onCountCartEvent(event: CountCartEvent){
+        if(event.isSuccess){
+
+//            countCartItem()
+
+        }
+    }
+
+    private fun countCartItem() {
+        cartDataSource.countItemInCart(com.tofukma.orderapp.Common.Common.currentUser!!.uid!!)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object :SingleObserver<Int>{
+                override fun onSuccess(t: Int) {
+                    fab.count = t
+                }
+
+                override fun onSubscribe(d: Disposable) {
+
+                }
+
+                override fun onError(e: Throwable) {
+
+                    Toast.makeText(this@HomeActivity,"[COUNT CART]"+e.message,Toast.LENGTH_SHORT).show()
+                }
+            })
+
+            }
 }
