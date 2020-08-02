@@ -10,7 +10,7 @@ interface CartDAO {
     @Query("SELECT * FROM Cart WHERE uid =:uid")
     fun getAllCart(uid:String):Flowable<List<CartItem>>
 
-    @Query("SELECT SUM(foodQuantity) FROM  Cart WHERE uid =:uid")
+    @Query("SELECT SUM(foodQuantity) FROM  Cart WHERE uid = :uid")
     fun countItemInCart(uid:String):Single<Int>
 
     @Query("SELECT SUM(foodQuantity*foodPrice) + (foodExtraPrice * foodQuantity)FROM Cart WHERE uid =:uid")

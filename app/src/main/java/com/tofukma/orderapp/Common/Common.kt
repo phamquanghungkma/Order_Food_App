@@ -1,5 +1,6 @@
 package com.tofukma.orderapp.Common
 
+<<<<<<< HEAD
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -9,6 +10,10 @@ import android.widget.TextView
 import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.Model.UserModel
+=======
+import com.tofukma.orderapp.Model.*
+import kotlinx.android.synthetic.main.fragment_food_detail.view.*
+>>>>>>> 2e9faa52bd30f7686d551318ecb559e8a12485a5
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -24,6 +29,7 @@ object Common {
             return "0,00"
     }
 
+<<<<<<< HEAD
     fun setSpanString(welcome: String, name: String?, txtUser: TextView?) {
         val builder = SpannableStringBuilder()
         builder.append(welcome)
@@ -32,6 +38,27 @@ object Common {
         txtSpannable.setSpan(boldSpan,0, name!!.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         builder.append(txtSpannable)
         txtUser!!.setText(builder,TextView.BufferType.SPANNABLE)
+=======
+    fun calcutaleExtraPrice(userSelectedSize: SizeModel?,
+                            userSelectedAddon: MutableList<AddonModel>?): Double {
+    var result:Double =0.0
+        if (userSelectedSize == null && userSelectedAddon == null)
+            return 0.0
+        else if(userSelectedSize == null){
+            for (addonModel in userSelectedAddon!!)
+                result += addonModel.price!!.toDouble()
+            return result
+        }
+        else if(userSelectedAddon == null){
+                result = userSelectedSize!!.price!!.toDouble()
+                return result
+        }else{
+            result = userSelectedSize!!.price!!.toDouble()
+            for (addonModel in userSelectedAddon!!)
+                result += addonModel.price!!.toDouble()
+            return result
+        }
+>>>>>>> 2e9faa52bd30f7686d551318ecb559e8a12485a5
     }
 
 

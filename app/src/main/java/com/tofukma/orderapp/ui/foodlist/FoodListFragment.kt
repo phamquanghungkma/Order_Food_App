@@ -41,8 +41,8 @@ class FoodListFragment : Fragment() {
             ViewModelProviders.of(this).get(FoodListViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_food_list, container, false)
         initViews(root)
-        foodListViewModel.getMutableFoodModelListData().observe(this, Observer {
-            adapter =  MyFoodListAdapter(context!!,it)
+        foodListViewModel.getMutableFoodModelListData().observe(viewLifecycleOwner, Observer {
+            adapter =  MyFoodListAdapter(requireContext(),it)
             recycler_food_list!!.adapter = adapter
             recycler_food_list!!.layoutAnimation = layoutAnimationController
         })
