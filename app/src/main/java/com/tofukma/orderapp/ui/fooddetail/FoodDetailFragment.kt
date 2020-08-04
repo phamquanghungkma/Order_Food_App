@@ -475,6 +475,7 @@ class FoodDetailFragment : Fragment(), TextWatcher {
     }
 
     private fun showDialogRating() {
+        // show dialog rating food
         var builder = AlertDialog.Builder(context!!)
         builder.setTitle("Rating Food")
         builder.setMessage("Please fill information")
