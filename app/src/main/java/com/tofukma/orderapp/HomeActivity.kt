@@ -330,5 +330,5 @@ class HomeActivity : AppCompatActivity() {
                 }
             })
 
-    gig}
+    }
 }
