@@ -56,9 +56,9 @@ class MyPopularCategoriesAdapter (internal var context:Context,
         holder.category_name!!.setText(popularCategoryModel.get(position).name)
 
         holder.setListener(object : IRecyclerItemClickListener {
-            override fun onItemClick(view: View, post: Int) {
+            override fun onItemClick(view: View, pos: Int) {
                 EventBus.getDefault()
-                    .postSticky(PopularFoodItemClick(popularCategoryModel[post]))
+                    .postSticky(PopularFoodItemClick(popularCategoryModel[pos]))
             }
         })
     }

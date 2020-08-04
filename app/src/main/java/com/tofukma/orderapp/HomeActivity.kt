@@ -217,6 +217,7 @@ class HomeActivity : AppCompatActivity() {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if(snapshot.exists()){
                             Common.categorySelected = snapshot.getValue(CategoryModel::class.java)
+                            Common.categorySelected!!.menu_id = snapshot.key
 
                             //Load food
                             FirebaseDatabase.getInstance()
@@ -236,8 +237,9 @@ class HomeActivity : AppCompatActivity() {
                                         if(snapshot.exists()){
                                             for (foodSnapShot in snapshot.children){
                                                 Common.foodSelected = foodSnapShot.getValue(FoodModel::class.java)
-                                                navController!!.navigate(R.id.nav_food_detail)
+                                                Common.foodSelected!!.key = foodSnapShot.key
                                             }
+                                            navController!!.navigate(R.id.nav_food_detail)
                                         }else{
                                             Toast.makeText(this@HomeActivity,"Item doesn't exists", Toast.LENGTH_SHORT).show()
                                         }
@@ -292,6 +294,7 @@ class HomeActivity : AppCompatActivity() {
                                                 Common.foodSelected = foodSnapShot.getValue(FoodModel::class.java)
                                                 navController!!.navigate(R.id.nav_food_detail)
                                             }
+
                                         }else{
                                             Toast.makeText(this@HomeActivity,"Item doesn't exists", Toast.LENGTH_SHORT).show()
                                         }
@@ -327,5 +330,5 @@ class HomeActivity : AppCompatActivity() {
                 }
             })
 
-            }
+    gig}
 }
