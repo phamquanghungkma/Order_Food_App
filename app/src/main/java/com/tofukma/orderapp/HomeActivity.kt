@@ -3,33 +3,28 @@ package com.tofukma.orderapp
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import com.google.android.gms.common.internal.service.Common
-import com.tofukma.orderapp.Common.Common.currentUser
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.CategoryClick
 import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.EventBus.FoodItemClick
-import com.tofukma.orderapp.Model.CategoryModel
-import io.reactivex.Scheduler
-import io.reactivex.Single
+import com.tofukma.orderapp.EventBus.HideFABCart
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -39,6 +34,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var cartDataSource: CartDataSource
+    private lateinit var navController: NavController
 
     override fun onResume(){
         super.onResume()
@@ -56,8 +52,9 @@ class HomeActivity : AppCompatActivity() {
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null).show()
+            navController.navigate(R.id.nav_cart)
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -66,8 +63,10 @@ class HomeActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail
-            ), drawerLayout
+                R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail,
+                R.id.nav_cart
+//                ,R.id.nav_send
+           ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -115,6 +114,16 @@ class HomeActivity : AppCompatActivity() {
 //            Toast.makeText(this,"Click to " +event.category.name,Toast.LENGTH_SHORT).show()
 
             findNavController(R.id.nav_host_fragment).navigate(R.id.nav_food_detail)
+        }
+    }
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    fun onHideFABEvent(event: HideFABCart){
+        if(event.isHide){
+
+            fab.hide()
+
+        }else{
+            fab.show()
         }
     }
 

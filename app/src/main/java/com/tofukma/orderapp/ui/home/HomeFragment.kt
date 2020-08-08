@@ -1,23 +1,16 @@
 package com.tofukma.orderapp.ui.home
 
 import android.os.Bundle
-import android.service.media.MediaBrowserService
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.tofukma.orderapp.Adapter.MyBestDealsAdapter
 
@@ -26,7 +19,7 @@ import com.tofukma.orderapp.R
 
 class HomeFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var homeViewModel: HomeViewModel;
 
     var recyclerView:RecyclerView ?= null
     var viewPager:LoopingViewPager ?= null

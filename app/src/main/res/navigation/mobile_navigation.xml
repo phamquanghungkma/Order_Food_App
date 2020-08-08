@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.tofukma.orderapp.ui.home.HomeFragment"
+        android:name="com.tofukma.orderapp.ui.home.CartFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
@@ -23,6 +23,12 @@
         android:name="com.tofukma.orderapp.ui.foodlist.FoodListFragment"
         android:label="@string/menu_food_list"
         tools:layout="@layout/fragment_food_list" />
+
+    <fragment
+        android:id="@+id/nav_cart"
+        android:name="com.tofukma.orderapp.ui.cart.CartFragment"
+        android:label="@string/menu_cart"
+        tools:layout="@layout/fragment_cart" />
 
     <fragment
         android:id="@+id/nav_food_detail"
