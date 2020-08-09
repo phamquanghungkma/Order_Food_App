@@ -16,7 +16,7 @@
             android:title="@string/menu_category" />
         <item
             android:id="@+id/nav_cart"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_baseline_shopping_cart_24"
             android:title="@string/menu_cart" />
     </group>
     <item android:title="Comunicate">
