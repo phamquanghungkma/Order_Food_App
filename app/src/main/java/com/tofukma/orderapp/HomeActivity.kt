@@ -66,7 +66,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume(){
         super.onResume()
-//        countCartItem()
+        countCartItem()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,7 +130,7 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
-//        countCartItem()
+       countCartItem()
     }
 
     private fun singOut() {
@@ -197,7 +197,7 @@ class HomeActivity : AppCompatActivity() {
     fun onCountCartEvent(event: CountCartEvent){
         if(event.isSuccess){
 
-//            countCartItem()
+           countCartItem()
 
         }
     }
