@@ -1,4 +1,6 @@
 package com.tofukma.orderapp.EventBus
 
-class UpdateItemInCart {
+import com.tofukma.orderapp.Database.CartItem
+
+class UpdateItemInCart(var cartItem: CartItem) {
 }

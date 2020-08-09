@@ -84,6 +84,7 @@ class HomeActivity : AppCompatActivity() {
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
+            navController.navigate(R.id.nav_cart)
         }
         drawer = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -94,6 +95,7 @@ class HomeActivity : AppCompatActivity() {
             setOf(
                 R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail,
                 R.id.nav_cart
+               ,R.id.nav_send
             ), drawer
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -308,6 +310,17 @@ class HomeActivity : AppCompatActivity() {
                         }
                     }
                 })
+        }
+    }
+
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    fun onHideFABEvent(event: HideFABCart){
+        if(event.isHide){
+
+            fab.hide()
+
+        }else{
+            fab.show()
         }
     }
 

@@ -14,14 +14,28 @@
             android:id="@+id/nav_menu"
             android:icon="@drawable/ic_baseline_restaurant_menu_24"
             android:title="@string/menu_category" />
-    </group>
-    <group android:id="@+id/cart_group">
         <item
             android:id="@+id/nav_cart"
-            android:icon="@drawable/ic_baseline_shopping_cart_24"
-            android:title="@string/nav_cart" />
-
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/menu_cart" />
     </group>
+    <item android:title="Comunicate">
+        <menu>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Food List"
+                />
+
+        </menu>
+    </item>
+<!--    <group android:id="@+id/cart_group">-->
+<!--        <item-->
+<!--            android:id="@+id/nav_cart"-->
+<!--            android:icon="@drawable/ic_baseline_shopping_cart_24"-->
+<!--            android:title="@string/nav_cart" />-->
+
+<!--    </group>-->
     <group android:id="@+id/user_group">
         <item
             android:id="@+id/nav_sign_out"

@@ -7,4 +7,5 @@
     <color name="overlay_color">#55333639</color>
     <color name="border_color">#AA333639</color>
     <color name="white">#FFFFFF</color>
+    <color name="background_color">#F5F5F5</color>
 </resources>
