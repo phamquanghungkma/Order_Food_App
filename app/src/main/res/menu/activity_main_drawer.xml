@@ -19,16 +19,16 @@
             android:icon="@drawable/ic_baseline_shopping_cart_24"
             android:title="@string/menu_cart" />
     </group>
-    <item android:title="Comunicate">
-        <menu>
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Food List"
-                />
+<!--    <item android:title="Comunicate">-->
+<!--        <menu>-->
+<!--            <item-->
+<!--                android:id="@+id/nav_send"-->
+<!--                android:icon="@drawable/ic_menu_send"-->
+<!--                android:title="Food List"-->
+<!--                />-->
 
-        </menu>
-    </item>
+<!--        </menu>-->
+<!--    </item>-->
 <!--    <group android:id="@+id/cart_group">-->
 <!--        <item-->
 <!--            android:id="@+id/nav_cart"-->

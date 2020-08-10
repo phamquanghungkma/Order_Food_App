@@ -58,7 +58,6 @@ import javax.sql.CommonDataSource
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var carDataSource: CommonDataSource
     private lateinit var navController: NavController
     private  var drawer : DrawerLayout?=null
     private lateinit var cartDataSource: CartDataSource
@@ -95,7 +94,7 @@ class HomeActivity : AppCompatActivity() {
             setOf(
                 R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail,
                 R.id.nav_cart
-               ,R.id.nav_send
+                //R.id.nav_send
             ), drawer
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

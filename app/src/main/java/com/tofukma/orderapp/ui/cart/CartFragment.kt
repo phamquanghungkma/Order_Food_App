@@ -73,12 +73,12 @@ class CartFragment : Fragment() {
             if(it == null || it.isEmpty()){
                 recycler_cart!!.visibility = View.GONE
                 group_place_holder!!.visibility = View.GONE
-                txt_empty_cart!!.visibility = View.GONE
+                txt_empty_cart!!.visibility = View.VISIBLE
 
             }else{
                 recycler_cart!!.visibility = View.VISIBLE
                 group_place_holder!!.visibility = View.VISIBLE
-                txt_empty_cart!!.visibility = View.VISIBLE
+                txt_empty_cart!!.visibility = View.GONE
                 adapter = MyCartAdapter(context!!,it)
                 recycler_cart!!.adapter = adapter
             }
@@ -91,6 +91,7 @@ class CartFragment : Fragment() {
         setHasOptionsMenu(true) // Import , if not add it , menu will never be inflate
 
         cartDataSource = LocalCartDataSource(CartDatabase.getInstance(context!!).cartDAO())
+
         recycler_cart = root.findViewById(R.id.recycler_cart) as RecyclerView
         recycler_cart!!.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(context)
@@ -130,7 +131,6 @@ class CartFragment : Fragment() {
                                 }
 
                             })
-
                     }
                 }))
             }
@@ -180,7 +180,8 @@ class CartFragment : Fragment() {
     //    var unbinder: Unbinder?= null
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     fun onUpdateItemInCart(event:UpdateItemInCart){
-        if(event.cartItem !=null){
+        if(event.cartItem !=null)
+        {
             recyclerViewState = recycler_cart!!.layoutManager!!.onSaveInstanceState()
             cartDataSource!!.updatecart(event.cartItem)
                 .subscribeOn(Schedulers.io())
@@ -242,11 +243,11 @@ class CartFragment : Fragment() {
                 .subscribe(object:SingleObserver<Int>{
                     override fun onSuccess(t: Int) {
                         Toast.makeText(context,"Clear Cart Success",Toast.LENGTH_SHORT)
+//                        EventBus.getDefault().postSticky(CountCartEvent(true))
                         EventBus.getDefault().postSticky(CountCartEvent(true))
                     }
 
                     override fun onSubscribe(d: Disposable) {
-                        TODO("Not yet implemented")
                     }
 
                     override fun onError(e: Throwable) {
@@ -270,9 +271,9 @@ class CartFragment : Fragment() {
 
 
 
-    override fun onPause() {
-        viewPager!!.pauseAutoScroll()
-        super.onPause()
-
-    }
+//    override fun onPause() {
+//        viewPager!!.pauseAutoScroll()
+//        super.onPause()
+//
+//    }
 }
