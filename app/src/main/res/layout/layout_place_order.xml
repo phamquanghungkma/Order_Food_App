@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android = "http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@android:color/white"
+    >
+    <com.google.android.material.textfield.TextInputLayout
+        android:fontFamily ="@font/brandon_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <EditText
+            android:id="@+id/edit_address"
+            android:hint=" Nhập vào địa chỉ "
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:text="Phương thức vận chuyển "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/dialog_header_color"
+        android:fontFamily="@font/brandon_medium"
+        />
+
+    <RadioGroup
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <RadioButton
+            android:id="@+id/rdi_home_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text=" Nhà riêng"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:button = "@drawable/ic_baseline_house_24"
+            />
+        <RadioButton
+            android:id="@+id/rdi_other_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text=" Địa chỉ khác "
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:button = "@drawable/ic_baseline_apartment_24"
+
+            />
+        <RadioButton
+            android:id="@+id/rdi_ship_this_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Gửi đến địa chỉ"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:button = "@drawable/ic_baseline_place_24"
+
+            />
+
+
+
+    </RadioGroup>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phương thức thanh toán"
+        android:fontFamily="@font/brandon_medium"
+        android:textSize="22sp"
+        android:textColor="@color/dialog_header_color"
+        android:textStyle="bold"
+        />
+        <RadioGroup
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rdi_cod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text=" Trả tiền mặt khi nhận hàng "
+                android:fontFamily="@font/brandon_medium"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                android:textColor="@color/dialog_text_color"
+                />
+            <RadioButton
+                android:id="@+id/rdi_braintree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text=" Thanh toán trực tuyến  "
+                android:fontFamily="@font/brandon_medium"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                android:textColor="@color/dialog_text_color"
+                />
+
+
+
+        </RadioGroup>
+</LinearLayout>
