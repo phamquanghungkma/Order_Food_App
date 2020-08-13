@@ -2,7 +2,10 @@ package com.tofukma.orderapp.ui.cart
 
 import android.app.AlertDialog
 import android.graphics.Color
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.os.Parcelable
 import android.view.*
 import android.view.animation.AnimationUtils
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.google.android.gms.common.internal.Objects
+import com.google.android.gms.location.*
 import com.tofukma.orderapp.Adapter.MyCartAdapter
 import com.tofukma.orderapp.CallBack.IMyButtonCallback
 import com.tofukma.orderapp.Common.Common
@@ -28,17 +32,21 @@ import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.EventBus.HideFABCart
 import com.tofukma.orderapp.EventBus.UpdateItemInCart
 import com.tofukma.orderapp.R
+import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.frament_cart.*
 import kotlinx.android.synthetic.main.layout_place_order.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.IOException
 import java.lang.StringBuilder
+import java.util.*
 
 class CartFragment : Fragment() {
     private var cartDataSource: CartDataSource?=null
@@ -46,6 +54,7 @@ class CartFragment : Fragment() {
     private var recyclerViewState: Parcelable?=null
     private lateinit var cartViewModel: CartViewModel
     private lateinit var btn_place_order : Button
+
 
 
     var txt_empty_cart: TextView?=null
@@ -56,11 +65,21 @@ class CartFragment : Fragment() {
     var viewPager:LoopingViewPager ?= null
     var adapter:MyCartAdapter?= null
 
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var currentLocation: Location
+
+
     var layoutAnimationController:LayoutAnimationController ?= null
 
     override fun onResume(){
         super.onResume()
         calculateTotalPrice()
+        if(fusedLocationProviderClient != null)
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback,
+            Looper.getMainLooper()
+                )
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,6 +92,7 @@ class CartFragment : Fragment() {
         cartViewModel.initCartdataSorce(context!!)
         val root = inflater.inflate(R.layout.frament_cart, container, false)
         initViews(root)
+        initLocation()
         cartViewModel.getMutableLiveDataCartItem().observe(this, Observer {
             if(it == null || it.isEmpty()){
                 recycler_cart!!.visibility = View.GONE
@@ -88,6 +108,32 @@ class CartFragment : Fragment() {
             }
         } )
         return root
+    }
+
+    private fun initLocation() {
+        buildLocationRequest()
+        buildLocationCallback()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context!!)
+        fusedLocationProviderClient!!.requestLocationUpdates(locationRequest,locationCallback,
+        Looper.getMainLooper()
+            )
+    }
+
+    private fun buildLocationCallback() {
+        locationCallback = object : LocationCallback(){
+            override fun onLocationResult(p0: LocationResult?) {
+                super.onLocationResult(p0)
+                currentLocation = p0!!.lastLocation
+            }
+        }
+    }
+
+    private fun buildLocationRequest() {
+        locationRequest = LocationRequest()
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        locationRequest.setInterval(5000)
+        locationRequest.setFastestInterval(3000)
+        locationRequest.setSmallestDisplacement(10f)
     }
 
     private fun initViews(root:View) {
@@ -154,7 +200,10 @@ class CartFragment : Fragment() {
 
             val view = LayoutInflater.from(context).inflate(R.layout.layout_place_order,null)
 
-            val edt_address = view.findViewById<View>(R.id.edit_address) as EditText
+            val edt_address = view.findViewById<View>(R.id.edt_address) as EditText
+            val edt_comment = view.findViewById<View>(R.id.edt_comment) as EditText
+            val txt_address = view.findViewById<View>(R.id.txt_address_detail) as TextView
+
             val rdi_home = view.findViewById<View>(R.id.rdi_home_address) as RadioButton
             val rdi_other_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
             val rdi_ship_to_this_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
@@ -168,6 +217,7 @@ class CartFragment : Fragment() {
             rdi_home.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
                     edt_address.setText(Common.currentUser!!.addrss!!)
+                    txt_address.visibility = View.GONE
                 }
 
             }
@@ -175,12 +225,41 @@ class CartFragment : Fragment() {
                 if(b){
                     edt_address.setText("")
                     edt_address.setHint("Nhập vào địa chỉ")
+                    txt_address.visibility = View.GONE
                 }
 
             }
             rdi_ship_to_this_address.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
-                        Toast.makeText(context!!,"Thực hiện sau ",Toast.LENGTH_SHORT).show();
+                       fusedLocationProviderClient!!.lastLocation
+                           .addOnFailureListener{ e ->
+                               txt_address.visibility = View.GONE
+                               Toast.makeText(context!!,""+e.message,Toast.LENGTH_SHORT).show()}
+                           .addOnCompleteListener{
+                               task ->
+                               val coordinates = StringBuilder()
+                                   .append(task.result!!.latitude)
+                                   .append("/")
+                                   .append(task.result!!.longitude)
+                                   .toString()
+                                val singleAddress = Single.just(getAddressFromLatLng(task.result!!.latitude,task.result!!.longitude))
+                              val disposable = singleAddress.subscribeWith(object:DisposableSingleObserver<String>(){
+                                  override fun onSuccess(t: String) {
+                                      edt_address.setText(coordinates)
+                                      txt_address.visibility = View.VISIBLE
+                                      txt_address.setText(t)
+                                  }
+
+                                  override fun onError(e: Throwable) {
+                                      edt_address.setText(coordinates)
+                                      txt_address.visibility = View.VISIBLE
+                                      txt_address.setText(e.message!!)
+                                  }
+                              })
+
+
+
+                           }
                     }
 
             }
@@ -204,6 +283,24 @@ class CartFragment : Fragment() {
 
     }
 
+    private fun getAddressFromLatLng(latitude: Double, longitude: Double): String {
+        val geoCoder = Geocoder(context!!, Locale.getDefault())
+        var result:String?=null
+        try {
+            val addressList = geoCoder.getFromLocation(latitude,longitude,1)
+            if(addressList != null && addressList.size > 0){
+                val address = addressList[0]
+                val sb = StringBuilder(address.getAddressLine(0))
+                result  = sb.toString()
+            }
+            else
+                result="Địa chỉ không tồn tại !!!"
+            return result
+        }catch (e:IOException)
+        {
+            return e.message!!
+        }
+    }
 
 
     private fun sumCart() {
@@ -235,12 +332,14 @@ class CartFragment : Fragment() {
     }
 
     override fun onStop() {
-        super.onStop()
         cartViewModel!!.onStop()
         compositeDisposable.clear()
         EventBus.getDefault().postSticky(HideFABCart(false))
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this)
+        if(fusedLocationProviderClient != null)
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        super.onStop()
     }
     //    var unbinder: Unbinder?= null
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
