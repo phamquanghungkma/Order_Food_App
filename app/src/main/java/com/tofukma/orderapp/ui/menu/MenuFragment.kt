@@ -66,8 +66,8 @@ class MenuFragment : Fragment() {
             override fun getSpanSize(position: Int): Int {
                 return  if(adapter != null){
                     when(adapter!!.getItemViewType(position)){
-                        Common.DEFAULT_COLUMN_COUNT -> 1
-                        Common.FULL_WIDTH_COLUMN -> 2
+                        Common.DEFAULT_COLUMN_COUNT -> 2
+                        Common.FULL_WIDTH_COLUMN -> 4
                         else -> 1
                     }
                 }
@@ -80,7 +80,7 @@ class MenuFragment : Fragment() {
         recycler_menu!!.layoutManager = staggeredGridLayoutManager
         recycler_menu!!.addItemDecoration(
             SpacesItemDecoration(
-                8
+                12
             )
         )
 
