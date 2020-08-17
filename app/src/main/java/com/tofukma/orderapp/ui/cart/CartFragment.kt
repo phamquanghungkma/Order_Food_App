@@ -7,6 +7,7 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.os.Parcelable
+import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.google.android.gms.common.internal.Objects
 import com.google.android.gms.location.*
+import com.google.firebase.database.FirebaseDatabase
 import com.tofukma.orderapp.Adapter.MyCartAdapter
 import com.tofukma.orderapp.CallBack.IMyButtonCallback
 import com.tofukma.orderapp.Common.Common
@@ -31,6 +33,7 @@ import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.EventBus.HideFABCart
 import com.tofukma.orderapp.EventBus.UpdateItemInCart
+import com.tofukma.orderapp.Model.Order
 import com.tofukma.orderapp.R
 import io.reactivex.Single
 import io.reactivex.SingleObserver
@@ -49,6 +52,7 @@ import java.lang.StringBuilder
 import java.util.*
 
 class CartFragment : Fragment() {
+
     private var cartDataSource: CartDataSource?=null
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
     private var recyclerViewState: Parcelable?=null
@@ -114,9 +118,7 @@ class CartFragment : Fragment() {
         buildLocationRequest()
         buildLocationCallback()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context!!)
-        fusedLocationProviderClient!!.requestLocationUpdates(locationRequest,locationCallback,
-        Looper.getMainLooper()
-            )
+        fusedLocationProviderClient!!.requestLocationUpdates(locationRequest,locationCallback,Looper.getMainLooper())
     }
 
     private fun buildLocationCallback() {
@@ -206,7 +208,7 @@ class CartFragment : Fragment() {
 
             val rdi_home = view.findViewById<View>(R.id.rdi_home_address) as RadioButton
             val rdi_other_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
-            val rdi_ship_to_this_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
+            val rdi_ship_to_this_address = view.findViewById<View>(R.id.rdi_ship_this_address) as RadioButton
 
             val rdi_cod = view.findViewById<View>(R.id.rdi_cod) as RadioButton
             val rdi_braintree = view.findViewById<View>(R.id.rdi_braintree) as RadioButton
@@ -224,7 +226,7 @@ class CartFragment : Fragment() {
             rdi_other_address.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
                     edt_address.setText("")
-                    edt_address.setHint("Nhập vào địa chỉ")
+                    edt_address.setHint("")
                     txt_address.visibility = View.GONE
                 }
 
@@ -267,18 +269,94 @@ class CartFragment : Fragment() {
             builder.setView(view)
             builder.setNegativeButton("NO",{dialog, _ ->dialog.dismiss()  })
                 .setPositiveButton("YES",{
-                    dialog, _ ->    Toast.makeText(context!!,"thuc hien sau ",Toast.LENGTH_SHORT).show()
+                    dialog, _ -> if(rdi_cod.isChecked)
+                        paymentCOD(edt_address.text.toString(),edt_comment.text.toString())
                 })
             val dialog = builder.create()
             dialog.show()
 
         }
+    }
+
+    private fun paymentCOD(address: String, comment: String) {
+            compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                        cartItemList ->
+                        // when we have all cartItem, we will get total price
+                    cartDataSource!!.sumPrice(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe(object: SingleObserver<Double>{
+                            override fun onSuccess(totalPrice: Double) {
+                                val finalPrice = totalPrice
+                                val order = Order()
+                                order.userId = Common.currentUser!!.uid!!
+                                order.userName = Common.currentUser!!.name!!
+                                order.userPhone = Common.currentUser!!.phone
+                                order.shippingAddress = address
+                                order.comment = comment
+                                if(currentLocation != null) {
+                                    order.lat = currentLocation!!.latitude
+                                    order.lng = currentLocation!!.longitude
+                                    }
+                                order.carItemList = cartItemList
+                                order.totalPayment = totalPrice
+                                order.finalPayment = finalPrice
+                                order.discount = 0
+                                order.isCod = true
+                                order.transactionId = "Thanh toán khi nhận hàng "
+
+                                pushOrderToServer(order)
+                            }
+
+                            override fun onSubscribe(d: Disposable) {
+                                TODO("Not yet implemented")
+                            }
+
+                            override fun onError(e: Throwable) {
+                                Toast.makeText(context!!,""+e.message,Toast.LENGTH_SHORT).show()
+                            }
 
 
+                        })
 
 
+                },{ throwable -> Toast.makeText(context!!,"BI LOI "+throwable.message,Toast.LENGTH_SHORT).show()
+                        Log.d("LOI",throwable.toString())
+            })
+            )
+
+    }
+
+    private fun pushOrderToServer(order: Order) {
+        FirebaseDatabase.getInstance().getReference(Common.ORDER_REF).child(Common.createOrderNumber())
+            .setValue(order).addOnFailureListener{
+                e -> Toast.makeText(context!!,""+e.message,Toast.LENGTH_LONG).show()
+            }
+            .addOnCompleteListener { task ->
+
+                //clean cart
+                if(task.isSuccessful){
+                    cartDataSource!!.cleanCart(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(object: SingleObserver<Int>{
+                            override fun onSuccess(t: Int) {
+                                Toast.makeText(context!!,"Đặt hàng thành công !!",Toast.LENGTH_LONG).show()
+                            }
+
+                            override fun onSubscribe(d: Disposable) {
+                                TODO("Not yet implemented")
+                            }
+
+                            override fun onError(e: Throwable) {
+                                Toast.makeText(context!!,"Bi loi "+e.message,Toast.LENGTH_LONG).show()
+                            }
 
 
+                        })
+
+                }
+
+
+            }
 
 
     }

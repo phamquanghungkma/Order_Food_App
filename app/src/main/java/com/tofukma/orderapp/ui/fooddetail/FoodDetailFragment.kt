@@ -470,7 +470,7 @@ class FoodDetailFragment : Fragment(), TextWatcher {
                 }
                 chip_group_user_selected_addon!!.addView(chip)
             }
-        } else if (Common.foodSelected!!.userSelectedAddon!!.size == 0)
+        } else
             chip_group_user_selected_addon!!.removeAllViews()
     }
 

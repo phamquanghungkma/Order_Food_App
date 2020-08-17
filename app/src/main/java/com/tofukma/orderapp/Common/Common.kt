@@ -12,12 +12,15 @@ import com.tofukma.orderapp.Model.UserModel
 
 import com.tofukma.orderapp.Model.*
 import kotlinx.android.synthetic.main.fragment_food_detail.view.*
+import java.lang.StringBuilder
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import kotlin.random.Random
 
 object Common {
 
+    val ORDER_REF: String = "Order"
     val COMMENT_REF: String = "Comments"
     var foodSelected: FoodModel? = null
     var categorySelected: CategoryModel? = null
@@ -70,5 +73,10 @@ object Common {
                     result += addonModel.price!!.toDouble()
                 return result
             }
+    }
+
+    fun createOrderNumber(): String {
+        return StringBuilder().append(System.currentTimeMillis()).append(Math.abs(Random.nextInt())).toString()
+
     }
 }
