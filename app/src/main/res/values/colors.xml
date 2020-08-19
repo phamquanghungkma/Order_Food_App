@@ -10,4 +10,5 @@
     <color name="background_color">#F5F5F5</color>
     <color name="dialog_header_color"> #c5c5c5</color>
     <color name="dialog_text_color">#464646</color>
+    <color name="yellow_green_lignt">#f2f5df</color>
 </resources>

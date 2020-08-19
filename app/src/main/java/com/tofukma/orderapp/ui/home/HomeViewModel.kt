@@ -10,11 +10,17 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.tofukma.orderapp.CallBack.IBestDealLoadCallBack
+import com.tofukma.orderapp.CallBack.ICategoryCallBackListener
 import com.tofukma.orderapp.CallBack.IPopularLoadCallBack
 import com.tofukma.orderapp.Model.BestDealModel
+import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Model.PopularCategoryModel
 
-class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack {
+class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
+//    ICategoryCallBackListener
+
+
+//    private var categoriesListMutable : MutableLiveData<List<CategoryModel>> ?= null
 
     private  var popularListMutableLiveData: MutableLiveData<List<PopularCategoryModel>> ?= null
     private  var bestDealListMutableLiveData: MutableLiveData<List<BestDealModel>> ?= null
@@ -22,6 +28,10 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack {
     private  lateinit var messageError:MutableLiveData<String>
     private  var popularLoadCallBackListener: IPopularLoadCallBack
     private var bestDealCallBackListener: IBestDealLoadCallBack
+//    private  val categoryCallBackListener: ICategoryCallBackListener
+
+
+
 
 
     val bestDealList:LiveData<List<BestDealModel>>
@@ -69,6 +79,7 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack {
 
         popularLoadCallBackListener = this
         bestDealCallBackListener = this
+//        categoryCallBackListener = this
     }
 
     override fun onPopularLoadSuccess(popularList: List<PopularCategoryModel>) {
@@ -104,4 +115,46 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack {
     override fun onBestDealLoadFailed(message: String) {
         messageError.value = message
     }
+
+//    override fun onCategoryLoadSuccess(categoriesList: List<CategoryModel>) {
+//        categoriesListMutable!!.value = categoriesList
+//    }
+
+//    override fun onCategoryLoadFailed(message: String) {
+//        messageError!!.value = message
+//    }
+//    fun getCategoryList():MutableLiveData<List<CategoryModel>>{
+//        if (categoriesListMutable == null)
+//        {
+//            categoriesListMutable = MutableLiveData()
+//            loadCategory()
+//        }
+//        return categoriesListMutable!!
+//    }
+    fun getMessageError():MutableLiveData<String>{
+
+        return messageError
+    }
+
+//    private fun loadCategory() {
+//        val tempList = ArrayList<CategoryModel>()
+//        val categoryRef = FirebaseDatabase.getInstance().getReference(com.tofukma.orderapp.Common.Common.CATEGORY_REF)
+//        categoryRef.addListenerForSingleValueEvent(object: ValueEventListener {
+//            override fun onCancelled(error: DatabaseError) {
+//                categoryCallBackListener.onCategoryLoadFailed((error.message))
+//            }
+//
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (itemSnapShot in snapshot!!.children){
+//                    val model = itemSnapShot.getValue<CategoryModel>(CategoryModel::class.java)
+//                    model!!.menu_id = itemSnapShot.key
+//                    tempList.add(model!!)
+//                }
+//                categoryCallBackListener.onCategoryLoadSuccess(tempList)
+//            }
+//        })
+//
+//
+//
+//    }
 }

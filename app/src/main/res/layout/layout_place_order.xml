@@ -50,7 +50,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:text="Phương thức vận chuyển "
+        android:text="Địa chỉ nhận hàng "
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="22sp"
@@ -76,25 +76,25 @@
             android:textColor="@color/dialog_text_color"
             android:button = "@drawable/ic_baseline_house_24"
             />
-        <RadioButton
-            android:id="@+id/rdi_other_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text=" Vị trí của bạn "
-            android:fontFamily="@font/brandon_medium"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            android:textColor="@color/dialog_text_color"
-            android:button = "@drawable/ic_baseline_apartment_24"
+<!--        <RadioButton-->
+<!--            android:id="@+id/rdi_other_address"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:checked="true"-->
+<!--            android:text=" Vị trí  khác"-->
+<!--            android:fontFamily="@font/brandon_medium"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="italic"-->
+<!--            android:textColor="@color/dialog_text_color"-->
+<!--            android:button = "@drawable/ic_baseline_apartment_24"-->
 
-            />
+<!--            />-->
         <RadioButton
             android:id="@+id/rdi_ship_this_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Gửi đến địa chỉ"
+            android:text="Vị trí của bạn "
             android:fontFamily="@font/brandon_medium"
             android:textSize="18sp"
             android:textStyle="italic"

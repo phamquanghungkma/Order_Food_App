@@ -207,7 +207,7 @@ class CartFragment : Fragment() {
             val txt_address = view.findViewById<View>(R.id.txt_address_detail) as TextView
 
             val rdi_home = view.findViewById<View>(R.id.rdi_home_address) as RadioButton
-            val rdi_other_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
+//            val rdi_other_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
             val rdi_ship_to_this_address = view.findViewById<View>(R.id.rdi_ship_this_address) as RadioButton
 
             val rdi_cod = view.findViewById<View>(R.id.rdi_cod) as RadioButton
@@ -223,14 +223,14 @@ class CartFragment : Fragment() {
                 }
 
             }
-            rdi_other_address.setOnCheckedChangeListener{ compoundButton, b ->
-                if(b){
-                    edt_address.setText("")
-                    edt_address.setHint("")
-                    txt_address.visibility = View.GONE
-                }
-
-            }
+//            rdi_other_address.setOnCheckedChangeListener{ compoundButton, b ->
+//                if(b){
+//                    edt_address.setText("")
+//                    edt_address.setHint("")
+//                    txt_address.visibility = View.GONE
+//                }
+//
+//            }
             rdi_ship_to_this_address.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
                        fusedLocationProviderClient!!.lastLocation
@@ -267,7 +267,7 @@ class CartFragment : Fragment() {
             }
 
             builder.setView(view)
-            builder.setNegativeButton("NO",{dialog, _ ->dialog.dismiss()  })
+            builder.setNegativeButton("NO",{dialog, _ ->dialog.dismiss()})
                 .setPositiveButton("YES",{
                     dialog, _ -> if(rdi_cod.isChecked)
                         paymentCOD(edt_address.text.toString(),edt_comment.text.toString())
@@ -282,9 +282,23 @@ class CartFragment : Fragment() {
             compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({
                         cartItemList ->
-                        // when we have all cartItem, we will get total price
-                    cartDataSource!!.sumPrice(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe(object: SingleObserver<Double>{
+                        // when we have all cartItem, we will get total price\
+                    if (cartDataSource == null){
+
+                        Log.d("LOI","do cartDataSource null");
+                    }
+                    if (Common.currentUser == null){
+
+                        Log.d("LOI","do Common.currentUser null");
+                    }
+                    if (Common.currentUser!!.uid == null){
+
+                        Log.d("LOI","do Common.currentUser.uid null");
+                    }
+                    cartDataSource!!.sumPrice(Common.currentUser!!.uid!!)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(object: SingleObserver<Double>{
                             override fun onSuccess(totalPrice: Double) {
                                 val finalPrice = totalPrice
                                 val order = Order()
@@ -308,8 +322,8 @@ class CartFragment : Fragment() {
                             }
 
                             override fun onSubscribe(d: Disposable) {
-                                TODO("Not yet implemented")
-                            }
+                                    Log.d("LOI","FIXED!!!")
+                             }
 
                             override fun onError(e: Throwable) {
                                 Toast.makeText(context!!,""+e.message,Toast.LENGTH_SHORT).show()
@@ -320,7 +334,8 @@ class CartFragment : Fragment() {
 
 
                 },{ throwable -> Toast.makeText(context!!,"BI LOI "+throwable.message,Toast.LENGTH_SHORT).show()
-                        Log.d("LOI",throwable.toString())
+                    throwable.printStackTrace()
+                     Log.d("LOI",throwable.message.toString())
             })
             )
 
@@ -343,11 +358,11 @@ class CartFragment : Fragment() {
                             }
 
                             override fun onSubscribe(d: Disposable) {
-                                TODO("Not yet implemented")
+                              Log.d("LOI","FIXED LOI 3")
                             }
 
                             override fun onError(e: Throwable) {
-                                Toast.makeText(context!!,"Bi loi "+e.message,Toast.LENGTH_LONG).show()
+                                Toast.makeText(context!!," "+e.message,Toast.LENGTH_LONG).show()
                             }
 
 
