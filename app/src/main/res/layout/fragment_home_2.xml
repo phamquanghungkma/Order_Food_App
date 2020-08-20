@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/brandon_medium"
-                android:text="Danh mục phổ biến "
+                android:text="Các món được yêu thích"
                 android:textSize="24sp"
                 android:textColor="#000000"
                 android:textStyle="bold">
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/brandon_medium"
-                android:text="Tất cả danh mục món "
+                android:text="Các danh mục tốt  "
                 android:textColor="#000000"
                 android:textSize="24sp"
                 android:textStyle="bold">

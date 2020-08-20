@@ -59,8 +59,8 @@ class MenuFragment : Fragment() {
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(context,R.anim.layout_item_from_left)
         recycler_menu = root.findViewById(R.id.recycler_menu) as RecyclerView
         recycler_menu!!.setHasFixedSize(true)
-        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2,RecyclerView.VERTICAL)
-        val layoutManager = GridLayoutManager(context,2)
+        val staggeredGridLayoutManager = StaggeredGridLayoutManager(1,RecyclerView.VERTICAL)
+        val layoutManager = GridLayoutManager(context,1)
         layoutManager.orientation = RecyclerView.VERTICAL
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {

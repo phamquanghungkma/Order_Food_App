@@ -44,9 +44,39 @@ class MenuViewModel : ViewModel(), ICategoryCallBackListener {
         return messageError
     }
 
+    fun getCategoryBestList():MutableLiveData<List<CategoryModel>>{
+        if (categoriesListMutable == null)
+        {
+            categoriesListMutable = MutableLiveData()
+            loadBestCategory()
+        }
+        return categoriesListMutable!!
+    }
+
     private fun loadCategory() {
         val tempList = ArrayList<CategoryModel>()
         val categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_REF)
+        categoryRef.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                categoryCallBackListener.onCategoryLoadFailed((error.message))
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (itemSnapShot in snapshot!!.children){
+                    val model = itemSnapShot.getValue<CategoryModel>(CategoryModel::class.java)
+                    model!!.menu_id = itemSnapShot.key
+                    tempList.add(model!!)
+                }
+                categoryCallBackListener.onCategoryLoadSuccess(tempList)
+            }
+        })
+
+
+
+    }
+    private fun loadBestCategory() {
+        val tempList = ArrayList<CategoryModel>()
+        val categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_BEST_REF)
         categoryRef.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 categoryCallBackListener.onCategoryLoadFailed((error.message))

@@ -25,6 +25,7 @@ import butterknife.Unbinder
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.tofukma.orderapp.Adapter.MyBestDealsAdapter
 import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
+import com.tofukma.orderapp.Adapter.MyCategoriesBestAdatper
 
 import com.tofukma.orderapp.Adapter.MyPopularCategoriesAdapter
 import com.tofukma.orderapp.Common.Common
@@ -35,7 +36,7 @@ import dmax.dialog.SpotsDialog
 
 class HomeFragment : Fragment() {
 
-    private var adapter: MyCategoriesAdapter?= null
+    private var adapter: MyCategoriesBestAdatper?= null
     private lateinit var dialog: AlertDialog
     private var recycler_menu: RecyclerView?= null
 
@@ -84,9 +85,9 @@ class HomeFragment : Fragment() {
 
         })
 
-        menuViewModel.getCategoryList().observe(this, Observer {
+        menuViewModel.getCategoryBestList().observe(this, Observer {
             dialog.dismiss()
-            adapter = MyCategoriesAdapter(context!!,it)
+            adapter = MyCategoriesBestAdatper(context!!,it)
             recycler_menu!!.adapter = adapter
             recycler_menu!!.layoutAnimation = layoutAnimationController
         })

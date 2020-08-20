@@ -25,6 +25,7 @@ object Common {
     var foodSelected: FoodModel? = null
     var categorySelected: CategoryModel? = null
     val CATEGORY_REF: String = "Category"
+    val CATEGORY_BEST_REF : String = "CategoryBest"
     val FULL_WIDTH_COLUMN: Int = 1
     val DEFAULT_COLUMN_COUNT: Int = 0
     val BEST_DEALS_REF: String = "BestDeals"
