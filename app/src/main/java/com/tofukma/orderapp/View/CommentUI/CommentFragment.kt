@@ -1,4 +1,4 @@
-package com.tofukma.orderapp.ui.comment
+package com.tofukma.orderapp.View.CommentUI
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -18,9 +18,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.tofukma.orderapp.Adapter.MyCommentAdapter
 import com.tofukma.orderapp.CallBack.ICommentCallBack
-import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Model.CommentModel
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.ViewModel.comment.CommentViewModel
 import dmax.dialog.SpotsDialog
 
 class CommentFragment : BottomSheetDialogFragment(), ICommentCallBack {
@@ -102,9 +103,10 @@ class CommentFragment : BottomSheetDialogFragment(), ICommentCallBack {
     companion object{
         private  var instance: CommentFragment?=null
 
-        fun getInstance():CommentFragment{
+        fun getInstance(): CommentFragment {
             if (instance == null)
-                instance = CommentFragment()
+                instance =
+                    CommentFragment()
             return instance!!
         }
     }

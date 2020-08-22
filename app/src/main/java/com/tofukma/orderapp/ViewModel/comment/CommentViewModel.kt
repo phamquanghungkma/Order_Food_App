@@ -1,4 +1,4 @@
-package com.tofukma.orderapp.ui.comment
+package com.tofukma.orderapp.ViewModel.comment
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

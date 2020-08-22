@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tofukma.orderapp.CallBack.IRecyclerItemClickListener
-import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.CartItem

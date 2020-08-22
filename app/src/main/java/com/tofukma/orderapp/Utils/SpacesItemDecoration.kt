@@ -1,4 +1,4 @@
-package com.tofukma.orderapp.Common
+package com.tofukma.orderapp.Utils
 
 import android.graphics.Rect
 import android.view.View

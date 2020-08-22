@@ -1,37 +1,29 @@
-package com.tofukma.orderapp.ui.home
+package com.tofukma.orderapp.View.HomeUI
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.service.media.MediaBrowserService
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.tofukma.orderapp.Adapter.MyBestDealsAdapter
-import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
 import com.tofukma.orderapp.Adapter.MyCategoriesBestAdatper
 
 import com.tofukma.orderapp.Adapter.MyPopularCategoriesAdapter
-import com.tofukma.orderapp.Common.Common
-import com.tofukma.orderapp.Common.SpacesItemDecoration
+import com.tofukma.orderapp.Utils.Common
+import com.tofukma.orderapp.Utils.SpacesItemDecoration
 import com.tofukma.orderapp.R
-import com.tofukma.orderapp.ui.menu.MenuViewModel
+import com.tofukma.orderapp.ViewModel.home.HomeViewModel
+import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
 
 class HomeFragment : Fragment() {
@@ -40,28 +32,18 @@ class HomeFragment : Fragment() {
     private lateinit var dialog: AlertDialog
     private var recycler_menu: RecyclerView?= null
 
-
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
-
-
-
 
     var recyclerView:RecyclerView ?= null
     var viewPager:LoopingViewPager ?= null
 
     var layoutAnimationController:LayoutAnimationController ?= null
 
-
-
 //    var unbinder: Unbinder?= null
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         homeViewModel =
             ViewModelProviders.of(this).get(HomeViewModel::class.java)
         menuViewModel = ViewModelProviders.of(this).get(MenuViewModel::class.java)
@@ -84,7 +66,7 @@ class HomeFragment : Fragment() {
             viewPager!!.adapter = adapter
 
         })
-
+        // Binding data hay là lắng nghe sự thay đổi dữ liệu rồi truyển vào view
         menuViewModel.getCategoryBestList().observe(this, Observer {
             dialog.dismiss()
             adapter = MyCategoriesBestAdatper(context!!,it)

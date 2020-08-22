@@ -1,4 +1,4 @@
-package com.tofukma.orderapp.ui.foodlist
+package com.tofukma.orderapp.View.FoodListUI
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,8 +13,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tofukma.orderapp.Adapter.MyFoodListAdapter
-import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.ViewModel.foodlist.FoodListViewModel
 
 class FoodListFragment : Fragment() {
 

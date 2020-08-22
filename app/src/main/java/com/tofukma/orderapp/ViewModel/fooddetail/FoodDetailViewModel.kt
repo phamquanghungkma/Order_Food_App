@@ -1,9 +1,8 @@
-package com.tofukma.orderapp.ui.fooddetail
+package com.tofukma.orderapp.ViewModel.fooddetail
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Model.CommentModel
 import com.tofukma.orderapp.Model.FoodModel
 

@@ -30,7 +30,8 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:fontFamily="@font/brandon_medium"
+                android:textColor="#000"
+                android:fontFamily="@font/montserrat_italic"
                 android:textSize="14sp"/>
             <TextView
                 android:id="@+id/txt_food_price"

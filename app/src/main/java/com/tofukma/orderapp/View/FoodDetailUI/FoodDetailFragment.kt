@@ -1,7 +1,6 @@
-package com.tofukma.orderapp.ui.fooddetail
+package com.tofukma.orderapp.View.FoodDetailUI
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,13 +16,12 @@ import com.andremion.counterfab.CounterFab
 import com.bumptech.glide.Glide
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import com.google.gson.Gson
-import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.CartItem
@@ -33,14 +30,14 @@ import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.Model.CommentModel
 import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.R
-import com.tofukma.orderapp.ui.comment.CommentFragment
+import com.tofukma.orderapp.View.CommentUI.CommentFragment
+import com.tofukma.orderapp.ViewModel.fooddetail.FoodDetailViewModel
 import dmax.dialog.SpotsDialog
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_food_detail.view.*
 import org.greenrobot.eventbus.EventBus
 import java.lang.StringBuilder
 

@@ -1,4 +1,4 @@
-package com.tofukma.orderapp.ui.menu
+package com.tofukma.orderapp.View.CategoryUI
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -15,11 +15,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
-import com.tofukma.orderapp.Common.Common
-import com.tofukma.orderapp.Common.SpacesItemDecoration
+import com.tofukma.orderapp.Utils.Common
+import com.tofukma.orderapp.Utils.SpacesItemDecoration
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
-import kotlinx.android.synthetic.main.fragment_category.*
 
 class MenuFragment : Fragment() {
 

@@ -20,8 +20,7 @@ import kotlinx.android.synthetic.main.layout_cart_item.view.*
 import org.greenrobot.eventbus.EventBus
 import java.lang.StringBuilder
 
-class MyCartAdapter(internal var context: Context,
-                    internal var cartItems: List<CartItem>):
+class MyCartAdapter(internal var context: Context, internal var cartItems: List<CartItem>):
     RecyclerView.Adapter<MyCartAdapter.MyViewHolder>() {
 
     internal var compositeDisposable: CompositeDisposable

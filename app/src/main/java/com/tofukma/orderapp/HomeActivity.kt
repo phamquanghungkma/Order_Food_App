@@ -1,17 +1,14 @@
 package com.tofukma.orderapp
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.MediaController
 import android.widget.TextView
 import android.widget.Toast
 import android.app.AlertDialog
 //import androidx.appcompat.app.AlertDialog
-import 	androidx.appcompat.app.AppCompatDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -24,36 +21,27 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
-import com.google.android.gms.common.internal.Objects
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
-import com.tofukma.orderapp.Common.Common
-import com.tofukma.orderapp.Common.Common.currentUser
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.*
 import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Model.FoodModel
-import com.tofukma.orderapp.Model.PopularCategoryModel
 import dmax.dialog.SpotsDialog
-import kotlinx.android.synthetic.main.layout_category_item.*
-import io.reactivex.Scheduler
-import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import javax.sql.CommonDataSource
 
 class HomeActivity : AppCompatActivity() {
 
@@ -256,7 +244,7 @@ class HomeActivity : AppCompatActivity() {
                 })
         }
     }
-
+// Xu ly su kien an vao nut BestDealFoodItemClick
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     fun onBestDealFoodItemClick(event: BestDealItemClick){
         if(event.model != null ){
@@ -324,7 +312,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun countCartItem() {
-        cartDataSource.countItemInCart(com.tofukma.orderapp.Common.Common.currentUser!!.uid!!)
+        cartDataSource.countItemInCart(com.tofukma.orderapp.Utils.Common.currentUser!!.uid!!)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object :SingleObserver<Int>{

@@ -1,6 +1,5 @@
-package com.tofukma.orderapp.ui.menu
+package com.tofukma.orderapp.ViewModel.menu
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.DataSnapshot
@@ -8,10 +7,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.tofukma.orderapp.CallBack.ICategoryCallBackListener
-import com.tofukma.orderapp.Common.Common
-import com.tofukma.orderapp.Model.BestDealModel
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Model.CategoryModel
-import com.tofukma.orderapp.Model.PopularCategoryModel
 
 class MenuViewModel : ViewModel(), ICategoryCallBackListener {
 
@@ -77,6 +74,7 @@ class MenuViewModel : ViewModel(), ICategoryCallBackListener {
     private fun loadBestCategory() {
         val tempList = ArrayList<CategoryModel>()
         val categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_BEST_REF)
+//        val categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_REF)
         categoryRef.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 categoryCallBackListener.onCategoryLoadFailed((error.message))

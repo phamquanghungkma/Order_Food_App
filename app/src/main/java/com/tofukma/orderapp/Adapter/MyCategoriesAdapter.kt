@@ -9,12 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tofukma.orderapp.CallBack.IRecyclerItemClickListener
-import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.EventBus.CategoryClick
 import com.tofukma.orderapp.Model.CategoryModel
-import com.tofukma.orderapp.Model.PopularCategoryModel
 import com.tofukma.orderapp.R
-import de.hdodenhof.circleimageview.CircleImageView
 import org.greenrobot.eventbus.EventBus
 
 class MyCategoriesAdapter (internal var context: Context, internal var categoriesList: List<CategoryModel>) : RecyclerView.Adapter<MyCategoriesAdapter.MyViewHolder>(){

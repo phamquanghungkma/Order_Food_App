@@ -1,4 +1,4 @@
-package com.tofukma.orderapp.ui.cart
+package com.tofukma.orderapp.View.CartUI
 
 import android.app.AlertDialog
 import android.graphics.Color
@@ -20,13 +20,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.asksira.loopingviewpager.LoopingViewPager
-import com.google.android.gms.common.internal.Objects
 import com.google.android.gms.location.*
 import com.google.firebase.database.FirebaseDatabase
 import com.tofukma.orderapp.Adapter.MyCartAdapter
 import com.tofukma.orderapp.CallBack.IMyButtonCallback
-import com.tofukma.orderapp.Common.Common
-import com.tofukma.orderapp.Common.MySwipeHelper
+import com.tofukma.orderapp.Utils.Common
+import com.tofukma.orderapp.Utils.MySwipeHelper
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.LocalCartDataSource
@@ -35,6 +34,7 @@ import com.tofukma.orderapp.EventBus.HideFABCart
 import com.tofukma.orderapp.EventBus.UpdateItemInCart
 import com.tofukma.orderapp.Model.Order
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.ViewModel.cart.CartViewModel
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,14 +42,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.frament_cart.*
-import kotlinx.android.synthetic.main.layout_place_order.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.lang.StringBuilder
 import java.util.*
+
+
 
 class CartFragment : Fragment() {
 
@@ -85,11 +85,7 @@ class CartFragment : Fragment() {
             Looper.getMainLooper()
                 )
     }
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         EventBus.getDefault().postSticky(HideFABCart(true))
         cartViewModel =
             ViewModelProviders.of(this).get(CartViewModel::class.java)
@@ -97,11 +93,14 @@ class CartFragment : Fragment() {
         val root = inflater.inflate(R.layout.frament_cart, container, false)
         initViews(root)
         initLocation()
+
+        // hàm lắng nghe LiveData
+        // fragment là các tp quan sát
         cartViewModel.getMutableLiveDataCartItem().observe(this, Observer {
             if(it == null || it.isEmpty()){
-                recycler_cart!!.visibility = View.GONE
-                group_place_holder!!.visibility = View.GONE
-                txt_empty_cart!!.visibility = View.VISIBLE
+                recycler_cart!!.visibility = View.GONE // ẩn đi
+                group_place_holder!!.visibility = View.GONE // ẩn đi
+                txt_empty_cart!!.visibility = View.VISIBLE // hiện ra dòng chữ trống
 
             }else{
                 recycler_cart!!.visibility = View.VISIBLE
@@ -152,9 +151,7 @@ class CartFragment : Fragment() {
 
         val swipe = object:MySwipeHelper(context!!, recycler_cart!!, 200)
         {
-            override fun instantianteMyButton(
-                viewHolder: RecyclerView.ViewHolder,
-                buffer: MutableList<MyButton>
+            override fun instantianteMyButton( viewHolder: RecyclerView.ViewHolder, buffer: MutableList<MyButton>
             ) {
                 buffer.add(MyButton(context!!,
                 "Delete",
@@ -198,7 +195,7 @@ class CartFragment : Fragment() {
         // Event
         btn_place_order.setOnClickListener{
             val builder = AlertDialog.Builder(context!!)
-            builder.setTitle("Thêm một bước nữa !")
+            builder.setTitle(" Địa chỉ nhận hàng  !")
 
             val view = LayoutInflater.from(context).inflate(R.layout.layout_place_order,null)
 

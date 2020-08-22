@@ -1,4 +1,4 @@
-package com.tofukma.orderapp.Common
+package com.tofukma.orderapp.Utils
 
 import android.graphics.Typeface
 import android.text.Spannable
@@ -11,7 +11,6 @@ import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.Model.UserModel
 
 import com.tofukma.orderapp.Model.*
-import kotlinx.android.synthetic.main.fragment_food_detail.view.*
 import java.lang.StringBuilder
 
 import java.math.RoundingMode

@@ -37,7 +37,7 @@
                 android:layout_height="match_parent"
                 android:textSize="24sp"
                 android:text="@string/popular_categories"
-                android:fontFamily="@font/brandon_medium"
+                android:fontFamily="@font/kaushanscript_regular"
                 android:textStyle="italic"
                 android:textColor="#000000"
                 android:paddingLeft="8dp"

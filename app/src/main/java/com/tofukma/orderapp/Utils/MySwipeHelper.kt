@@ -1,11 +1,10 @@
-package com.tofukma.orderapp.Common
+package com.tofukma.orderapp.Utils
 
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.media.Image
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View

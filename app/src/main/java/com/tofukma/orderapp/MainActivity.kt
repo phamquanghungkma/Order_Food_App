@@ -1,6 +1,5 @@
 package com.tofukma.orderapp
 
-import android.accounts.Account
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -10,30 +9,22 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AlertDialogLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.google.firebase.ktx.Firebase
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import com.tofukma.orderapp.Common.Common
+import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Model.UserModel
-import com.tofukma.orderapp.Remote.ICloudFuntions
-import com.tofukma.orderapp.Remote.RetrofitCloudClient
 import dmax.dialog.SpotsDialog
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.functions.Functions
-import kotlinx.android.synthetic.main.layout_register.*
-import org.w3c.dom.Text
-import retrofit2.Retrofit
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -42,7 +33,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var listener: FirebaseAuth.AuthStateListener
     private lateinit var dialog: android.app.AlertDialog
     private val compositeDisposable = CompositeDisposable()
-    private lateinit var cloudFunctions: ICloudFuntions
 
 
     private lateinit var userRef: DatabaseReference
@@ -82,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCE)
         firebaseAuth = FirebaseAuth.getInstance()
         dialog = SpotsDialog.Builder().setContext(this).setCancelable(false).build()
-        cloudFunctions = RetrofitCloudClient.getInstance().create(ICloudFuntions::class.java)
         listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
 
             Dexter.withActivity(this@MainActivity)

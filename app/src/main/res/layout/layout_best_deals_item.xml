@@ -6,9 +6,11 @@
     >
 
     <ImageView
+
+        android:adjustViewBounds="true"
         android:id="@+id/img_best_deal"
         android:scaleType="fitXY"
-        android:layout_width="match_parent"
+      android:layout_width="match_parent"
         android:layout_height="match_parent"
     ></ImageView>
     

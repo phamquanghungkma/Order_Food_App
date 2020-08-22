@@ -23,11 +23,11 @@ class MyBestDealsAdapter(context: Context,itemList: List<BestDealModel>, isInfin
 
     override fun bindView(convertView: View?, listPosition: Int, viewType: Int) {
         val imageView = convertView!!.findViewById<ImageView>(R.id.img_best_deal)
-        val textView = convertView!!.findViewById<TextView>(R.id.txt_best_deal)
+//        val textView = convertView!!.findViewById<TextView>(R.id.txt_best_deal)
 
         //set data
         Glide.with(context).load(itemList[listPosition].image).into(imageView)
-        textView.text = itemList[listPosition].name
+//        textView.text = itemList[listPosition].name
 
         convertView.setOnClickListener{
             EventBus.getDefault().postSticky(BestDealItemClick(itemList[listPosition]))
