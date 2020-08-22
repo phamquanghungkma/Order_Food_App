@@ -97,7 +97,8 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
 
 
     override fun onLoadOrderSucess(orderList: ArrayList<Order>) {
-
+            dialog.dismiss()// bo cai dialog loading
+            viewOrderModel!!.setMutableLiveDataOrderList(orderList)
     }
 
     override fun onLoadOrderFailed(message: String) {

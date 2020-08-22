@@ -96,7 +96,7 @@ object Common {
     fun convertStatusToText(orderStatus: Int): String {
         when(orderStatus)
         {
-            0 -> return "Đã "
+            0 -> return "Đã đặt "
             1 -> return "Đang vận chuyển"
             3 -> return "Đã Vận chuyển"
             -1 -> return "Hủy đơn"
