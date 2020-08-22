@@ -21,8 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.google.android.gms.location.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.tofukma.orderapp.Adapter.MyCartAdapter
+import com.tofukma.orderapp.CallBack.ILoadTimeFromFirebaseCallBack
 import com.tofukma.orderapp.CallBack.IMyButtonCallback
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Utils.MySwipeHelper
@@ -47,18 +51,28 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.lang.StringBuilder
+import java.text.SimpleDateFormat
 import java.util.*
 
 
 
-class CartFragment : Fragment() {
+class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
+    override fun onLoadTimeSuccess(order: Order, estimatedTimeMs: Long) {
+        order.createData = (estimatedTimeMs)
+        writeOrderToFirebase(order)
+
+    }
+
+    override fun onLoadTimeFailed(message: String) {
+       Toast.makeText(this@CartFragment,message,Toast.LENGTH_SHORT).show()
+    }
 
     private var cartDataSource: CartDataSource?=null
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
     private var recyclerViewState: Parcelable?=null
     private lateinit var cartViewModel: CartViewModel
     private lateinit var btn_place_order : Button
-
+    lateinit var listener:ILoadTimeFromFirebaseCallBack
     var txt_empty_cart: TextView?=null
     var txt_total_price:TextView?=null
     var group_place_holder:CardView?=null
@@ -140,7 +154,7 @@ class CartFragment : Fragment() {
         setHasOptionsMenu(true) // Import , if not add it , menu will never be inflate
 
         cartDataSource = LocalCartDataSource(CartDatabase.getInstance(context!!).cartDAO())
-
+        listener = this
         recycler_cart = root.findViewById(R.id.recycler_cart) as RecyclerView
         recycler_cart!!.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(context)
@@ -314,6 +328,8 @@ class CartFragment : Fragment() {
                                 order.transactionId = "Thanh toán khi nhận hàng "
 
                                 pushOrderToServer(order)
+
+                                //syncLocalTimeWithServerTime(order)
                             }
 
                             override fun onSubscribe(d: Disposable) {
@@ -521,7 +537,22 @@ class CartFragment : Fragment() {
 
     }
 
-
+private fun syncLocalTimeWithServerTime(order: Order){
+    val offsetRef = FirebaseDatabase.getInstance().getReference(".info/serverTimeOffset")
+    offsetRef.addListenerForSingleValueEvent(object:ValueEventListener(
+        override fun onCancelled(p0: DatabaseError){
+            listener.onLoadTimeFailed(p0.message)
+        }
+                override fun onDataChange(p0: DataSnapshot){
+            val offset = p0.getValue(Long::class.java)
+            val estimatedServerTimeMs = System.currentTimeMillis() + offset!!
+            val sdf = SimpleDateFormat("MM dd yyyy, HH:mm")
+            val date = Date(estimatedServerTimeMs)
+            Log.d("EDMT_DEV"," "+sdf.format(date))
+            listener.onLoadTimeSuccess(order,estimatedServerTimeMs)
+        }
+    ))
+}
 
 //    override fun onPause() {
 //        viewPager!!.pauseAutoScroll()
