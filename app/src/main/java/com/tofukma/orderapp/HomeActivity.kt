@@ -113,6 +113,10 @@ class HomeActivity : AppCompatActivity() {
                 {
                     navController.navigate(R.id.nav_menu)
                 }
+                else if(p0.itemId == R.id.nav_view_orders)
+                {
+                    navController.navigate(R.id.nav_view_orders)
+                }
                 return true
             }
         })

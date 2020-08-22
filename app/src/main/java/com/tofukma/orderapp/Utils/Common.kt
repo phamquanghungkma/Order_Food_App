@@ -79,4 +79,27 @@ object Common {
         return StringBuilder().append(System.currentTimeMillis()).append(Math.abs(Random.nextInt())).toString()
 
     }
+
+    fun getDateOfWeek(i: Int): String {
+        when(i){
+        1 -> return "Thứ 2"
+        2 -> return "Thứ 3"
+        3 -> return "Thứ 4"
+        4 -> return "Thứ 5"
+        5 -> return "Thứ 6"
+        6 -> return "Thứ 7"
+            else -> "Unk"
+        }
+    }
+
+    fun convertStatusToText(orderStatus: Int): String {
+        when(orderStatus){
+            0 -> return ""
+            2 -> return "Đang vận chuyển"
+            3 -> return "Vận chuyển"
+            4 -> return "Hủy đơn"
+            5 -> return "Lỗi đơn hàng"
+            else -> "Không xác định"
+        }
+    }
 }

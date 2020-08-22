@@ -29,11 +29,11 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
 
     private var viewOrderModel : ViewOrderModel ?= null
 
-    internal var dialog:AlertDialog
+    internal lateinit var dialog:AlertDialog
 
-    internal var recycler_order : RecyclerView
+    internal lateinit var recycler_order : RecyclerView
 
-    internal var listener : ILoadOrderCallbackListener
+    internal lateinit var listener : ILoadOrderCallbackListener
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -87,7 +87,7 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
             listener = this
             dialog = SpotsDialog.Builder().setContext(context!!).setCancelable(false).build()
 
-            recycler_order = root.findViewById(R.id.recycler_order) as RecyclerView
+            recycler_order = root!!.findViewById(R.id.recycler_order) as RecyclerView
             recycler_order.setHasFixedSize(true)
             val layoutManager = LinearLayoutManager(requireContext())
             recycler_order.layoutManager = layoutManager
