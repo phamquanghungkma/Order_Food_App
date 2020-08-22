@@ -59,8 +59,6 @@ class CartFragment : Fragment() {
     private lateinit var cartViewModel: CartViewModel
     private lateinit var btn_place_order : Button
 
-
-
     var txt_empty_cart: TextView?=null
     var txt_total_price:TextView?=null
     var group_place_holder:CardView?=null
