@@ -59,12 +59,12 @@ import java.util.*
 class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     override fun onLoadTimeSuccess(order: Order, estimatedTimeMs: Long) {
         order.createData = (estimatedTimeMs)
-        writeOrderToFirebase(order)
+        syncLocalTimeWithServerTime(order)
 
     }
 
     override fun onLoadTimeFailed(message: String) {
-       Toast.makeText(this@CartFragment,message,Toast.LENGTH_SHORT).show()
+       Toast.makeText(context!!,message,Toast.LENGTH_SHORT).show()
     }
 
     private var cartDataSource: CartDataSource?=null
@@ -329,7 +329,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
                                 pushOrderToServer(order)
 
-                                //syncLocalTimeWithServerTime(order)
+                                syncLocalTimeWithServerTime(order)
                             }
 
                             override fun onSubscribe(d: Disposable) {
@@ -539,19 +539,21 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
 private fun syncLocalTimeWithServerTime(order: Order){
     val offsetRef = FirebaseDatabase.getInstance().getReference(".info/serverTimeOffset")
-    offsetRef.addListenerForSingleValueEvent(object:ValueEventListener(
-        override fun onCancelled(p0: DatabaseError){
-            listener.onLoadTimeFailed(p0.message)
+    offsetRef.addListenerForSingleValueEvent(object: ValueEventListener{
+        override fun onCancelled(error: DatabaseError) {
+                listener.onLoadTimeFailed(error.message)
         }
-                override fun onDataChange(p0: DataSnapshot){
-            val offset = p0.getValue(Long::class.java)
-            val estimatedServerTimeMs = System.currentTimeMillis() + offset!!
-            val sdf = SimpleDateFormat("MM dd yyyy, HH:mm")
-            val date = Date(estimatedServerTimeMs)
-            Log.d("EDMT_DEV"," "+sdf.format(date))
-            listener.onLoadTimeSuccess(order,estimatedServerTimeMs)
+
+        override fun onDataChange(snapshot: DataSnapshot) {
+                val offset =  snapshot.getValue(Long::class.java)
+                val estimatedServerTimeInMs = System.currentTimeMillis() + offset!! // them missing offset vao current time
+                val sdf = SimpleDateFormat("MMM dd yyyy, HH:mm")
+                val date = Date(estimatedServerTimeInMs)
+                Log.d("TofuKMA",""+sdf.format(date))
+                listener.onLoadTimeSuccess(order,estimatedServerTimeInMs)
         }
-    ))
+
+    })
 }
 
 //    override fun onPause() {
