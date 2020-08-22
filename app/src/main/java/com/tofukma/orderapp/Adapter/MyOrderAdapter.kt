@@ -29,7 +29,7 @@ class MyOrderAdapter(private val context:Context,private val orderList:List<Orde
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(LayoutInflater.from(context!!)
-            .inflate(R.layout.layout_order_item,parent,false)
+            .inflate(R.layout.layout_order_item,parent,false))
     }
 
     override fun getItemCount(): Int {
@@ -41,9 +41,9 @@ class MyOrderAdapter(private val context:Context,private val orderList:List<Orde
             .load(orderList[position].carItemList!![0].foodImage)
             .into(holder.img_order!!)
 
-        calender.timeInMillis = orderList[position].createDate
+        calender.timeInMillis = orderList[position].createDate!!
 
-        val date =  Date(orderList[position].createDate)
+        val date = orderList[position].createDate
 
         holder.txt_order_date!!.text = StringBuilder(Common.getDateOfWeek(calender.get(Calendar.DAY_OF_WEEK)))
             .append(" ")

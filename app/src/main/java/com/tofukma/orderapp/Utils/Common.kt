@@ -88,18 +88,22 @@ object Common {
         4 -> return "Thứ 5"
         5 -> return "Thứ 6"
         6 -> return "Thứ 7"
-            else -> "Unk"
+            else -> return "Unk"
         }
+
     }
 
     fun convertStatusToText(orderStatus: Int): String {
-        when(orderStatus){
-            0 -> return ""
-            2 -> return "Đang vận chuyển"
-            3 -> return "Vận chuyển"
-            4 -> return "Hủy đơn"
-            5 -> return "Lỗi đơn hàng"
-            else -> "Không xác định"
+        when(orderStatus)
+        {
+            0 -> return "Đã "
+            1 -> return "Đang vận chuyển"
+            3 -> return "Đã Vận chuyển"
+            -1 -> return "Hủy đơn"
+//            5 -> return "Lỗi đơn hàng"
+            else -> return "Không xác định"
         }
     }
+
+
 }

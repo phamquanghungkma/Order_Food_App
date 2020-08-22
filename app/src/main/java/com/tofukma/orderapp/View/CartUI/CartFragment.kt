@@ -58,10 +58,13 @@ import java.util.*
 
 class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     override fun onLoadTimeSuccess(order: Order, estimatedTimeMs: Long) {
-        order.createData = (estimatedTimeMs)
-        syncLocalTimeWithServerTime(order)
+        order.createDate = estimatedTimeMs
+        Log.d("Date", order.createDate.toString())
+        order.orderStatus = 0
+        pushOrderToServer(order)
 
     }
+
 
     override fun onLoadTimeFailed(message: String) {
        Toast.makeText(context!!,message,Toast.LENGTH_SHORT).show()
@@ -327,9 +330,9 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                 order.isCod = true
                                 order.transactionId = "Thanh toán khi nhận hàng "
 
-                                pushOrderToServer(order)
-
                                 syncLocalTimeWithServerTime(order)
+
+
                             }
 
                             override fun onSubscribe(d: Disposable) {
@@ -550,6 +553,11 @@ private fun syncLocalTimeWithServerTime(order: Order){
                 val sdf = SimpleDateFormat("MMM dd yyyy, HH:mm")
                 val date = Date(estimatedServerTimeInMs)
                 Log.d("TofuKMA",""+sdf.format(date))
+                Log.d("TofuKMA1",""+estimatedServerTimeInMs)
+                    if(estimatedServerTimeInMs is Long){
+                        Log.d("Type  ","Type is Long")
+
+                    }
                 listener.onLoadTimeSuccess(order,estimatedServerTimeInMs)
         }
 
