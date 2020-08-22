@@ -54,6 +54,8 @@ class MenuViewModel : ViewModel(), ICategoryCallBackListener {
         val tempList = ArrayList<CategoryModel>()
         val categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_REF)
         categoryRef.addListenerForSingleValueEvent(object: ValueEventListener {
+            //  sự kiện đọc dữ liệu trên Firebase
+            // addListenerForSingleValueEvent phát hiện sự thay đổi của dữ liệu
             override fun onCancelled(error: DatabaseError) {
                 categoryCallBackListener.onCategoryLoadFailed((error.message))
             }
