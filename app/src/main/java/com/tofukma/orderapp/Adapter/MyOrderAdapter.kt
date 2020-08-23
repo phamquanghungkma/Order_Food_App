@@ -48,7 +48,7 @@ class MyOrderAdapter(private val context:Context,private val orderList:List<Orde
         holder.txt_order_date!!.text = StringBuilder(Common.getDateOfWeek(calender.get(Calendar.DAY_OF_WEEK)))
             .append(" ")
             .append(simpleDataFormat.format(date))
-        holder.txt_order_number!!.text = StringBuilder("Số đơn hàng: ").append(orderList[position].orderNumber)
+        holder.txt_order_number!!.text = StringBuilder("Mã đơn: ").append(orderList[position].orderNumber)
         holder.txt_order_comment!!.text = StringBuilder("Bình luận: ").append(orderList[position].comment)
         holder.txt_order_status!!.text = StringBuilder("Trạng thái: ").append(Common.convertStatusToText(orderList[position].orderStatus))
     }

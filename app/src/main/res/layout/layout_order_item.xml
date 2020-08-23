@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     >
     <LinearLayout
@@ -26,7 +26,7 @@
                 android:id="@+id/txt_order_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/brandon_medium"
+                android:fontFamily="@font/montserrat_black"
                 android:text="Today at 13:05:06 pm "
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -38,40 +38,40 @@
                 android:id="@+id/txt_order_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/brandon_medium"
+                android:fontFamily="@font/dancingscript_regular"
                 android:text="Order number : "
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="italic"
-                android:textColor="@android:color/holo_red_dark"
+                android:textColor="#000"
                 />
             <TextView
                 android:id="@+id/txt_order_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/brandon_medium"
+                android:fontFamily="@font/dancingscript_regular"
                 android:text="Order comment : "
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="italic"
-                android:textColor="@android:color/holo_red_dark"
+                android:textColor="#000"
                 />
             <TextView
                 android:id="@+id/txt_order_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/brandon_medium"
+                android:fontFamily="@font/dancingscript_regular"
                 android:text=" Status : Placed "
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:textSize="12sp"
+                android:textSize="16sp"
                 android:textStyle="italic"
-                android:textColor="@android:color/holo_red_dark"
+                android:textColor="#000"
                 />
 
 
