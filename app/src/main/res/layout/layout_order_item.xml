@@ -6,15 +6,15 @@
     android:orientation="vertical"
     >
     <LinearLayout
-        android:padding="16dp"
+        android:padding="12dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/img_order"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:scaleType="fitXY"
             />
         <LinearLayout
@@ -40,10 +40,10 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/brandon_medium"
                 android:text="Order number : "
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:textSize="12sp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
                 android:textStyle="italic"
                 android:textColor="@android:color/holo_red_dark"
                 />
@@ -53,10 +53,10 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/brandon_medium"
                 android:text="Order comment : "
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:textSize="12sp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
                 android:textStyle="italic"
                 android:textColor="@android:color/holo_red_dark"
                 />
@@ -66,9 +66,9 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/brandon_medium"
                 android:text=" Status : Placed "
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
                 android:textSize="12sp"
                 android:textStyle="italic"
                 android:textColor="@android:color/holo_red_dark"
