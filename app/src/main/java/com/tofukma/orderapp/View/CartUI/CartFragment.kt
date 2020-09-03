@@ -35,9 +35,14 @@ import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.EventBus.HideFABCart
+import com.tofukma.orderapp.EventBus.MenuItemBack
 import com.tofukma.orderapp.EventBus.UpdateItemInCart
+import com.tofukma.orderapp.Model.FCMResponse
+import com.tofukma.orderapp.Model.FCMSendData
 import com.tofukma.orderapp.Model.Order
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.Remote.IFCMService
+import com.tofukma.orderapp.Remote.RetrofitFCMClient
 import com.tofukma.orderapp.ViewModel.cart.CartViewModel
 import io.reactivex.Single
 import io.reactivex.SingleObserver
@@ -46,6 +51,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.layout_cart_item.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -53,7 +59,7 @@ import java.io.IOException
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
-
+import kotlin.collections.HashMap
 
 
 class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
@@ -92,6 +98,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
     var layoutAnimationController:LayoutAnimationController ?= null
 
+    lateinit var ifcmService: IFCMService
+
     override fun onResume(){
         super.onResume()
         calculateTotalPrice()
@@ -101,6 +109,9 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                 )
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        setHasOptionsMenu(true)
+
         EventBus.getDefault().postSticky(HideFABCart(true))
         cartViewModel =
             ViewModelProviders.of(this).get(CartViewModel::class.java)
@@ -156,6 +167,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
         setHasOptionsMenu(true) // Import , if not add it , menu will never be inflate
 
+        ifcmService = RetrofitFCMClient.getInstance().create(IFCMService::class.java)
+
         cartDataSource = LocalCartDataSource(CartDatabase.getInstance(context!!).cartDAO())
         listener = this
         recycler_cart = root.findViewById(R.id.recycler_cart) as RecyclerView
@@ -163,6 +176,9 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
         val layoutManager = LinearLayoutManager(context)
         recycler_cart!!.layoutManager = layoutManager
         recycler_cart!!.addItemDecoration(DividerItemDecoration(context,layoutManager.orientation))
+
+
+
 
         val swipe = object:MySwipeHelper(context!!, recycler_cart!!, 200)
         {
@@ -340,7 +356,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                              }
 
                             override fun onError(e: Throwable) {
-                                Toast.makeText(context!!,""+e.message,Toast.LENGTH_SHORT).show()
+                                if(!e.message!!.contains("Query returned emtpy"))
+                                    Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
                             }
 
 
@@ -368,7 +385,28 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(object: SingleObserver<Int>{
                             override fun onSuccess(t: Int) {
-                                Toast.makeText(context!!,"Đặt hàng thành công !!",Toast.LENGTH_LONG).show()
+
+                                val dataSend = HashMap<String,String>()
+                                // format thông báo đc gửi đi
+                                dataSend.put(Common.NOTI_TITLE," Đơn mới ")
+                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.phone)
+
+                                val sendData = FCMSendData(Common.getNewOrderTopic(),dataSend)
+
+                                compositeDisposable.add(ifcmService.sendNotification(sendData)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({t:FCMResponse? ->
+                                        if(t!!.success != 0)
+                                            Toast.makeText(context!!,"Đặt hàng thành công ",Toast.LENGTH_LONG).show()
+                                    },{
+                                            throwable: Throwable ->
+                                        throwable.printStackTrace()
+                                        Toast.makeText(context!!,"Thoong bao loi ",Toast.LENGTH_LONG).show()
+
+                                    }))
+
+
                             }
 
                             override fun onSubscribe(d: Disposable) {
@@ -425,8 +463,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                 }
 
                 override fun onError(e: Throwable) {
-                    if(!e.message!!.contains("Query returned empty"))
-                        Toast.makeText(context,""+e.message!!,Toast.LENGTH_SHORT).show()
+                    if(!e.message!!.contains("Query returned emtpy"))
+                        Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
                 }
 
             })
@@ -563,6 +601,12 @@ private fun syncLocalTimeWithServerTime(order: Order){
 
     })
 }
+
+    override fun onDestroy() {
+        EventBus.getDefault().postSticky(MenuItemBack())
+        super.onDestroy()
+
+    }
 
 //    override fun onPause() {
 //        viewPager!!.pauseAutoScroll()

@@ -19,12 +19,14 @@ import com.tofukma.orderapp.Adapter.MyBestDealsAdapter
 import com.tofukma.orderapp.Adapter.MyCategoriesBestAdatper
 
 import com.tofukma.orderapp.Adapter.MyPopularCategoriesAdapter
+import com.tofukma.orderapp.EventBus.MenuItemBack
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Utils.SpacesItemDecoration
 import com.tofukma.orderapp.R
 import com.tofukma.orderapp.ViewModel.home.HomeViewModel
 import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
+import org.greenrobot.eventbus.EventBus
 
 class HomeFragment : Fragment() {
 
@@ -123,6 +125,11 @@ class HomeFragment : Fragment() {
     override fun onPause() {
         viewPager!!.pauseAutoScroll()
         super.onPause()
+
+    }
+    override fun onDestroy() {
+        EventBus.getDefault().postSticky(MenuItemBack())
+        super.onDestroy()
 
     }
 }

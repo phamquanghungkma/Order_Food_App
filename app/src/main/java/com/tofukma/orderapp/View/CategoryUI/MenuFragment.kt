@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
+import com.tofukma.orderapp.EventBus.MenuItemBack
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Utils.SpacesItemDecoration
 import com.tofukma.orderapp.R
 import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
+import org.greenrobot.eventbus.EventBus
 
 class MenuFragment : Fragment() {
 
@@ -83,6 +85,11 @@ class MenuFragment : Fragment() {
                 8
             )
         )
+
+    }
+    override fun onDestroy() {
+        EventBus.getDefault().postSticky(MenuItemBack())
+        super.onDestroy()
 
     }
 }

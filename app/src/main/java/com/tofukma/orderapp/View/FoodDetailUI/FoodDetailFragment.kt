@@ -27,6 +27,7 @@ import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.CartItem
 import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.CountCartEvent
+import com.tofukma.orderapp.EventBus.MenuItemBack
 import com.tofukma.orderapp.Model.CommentModel
 import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.R
@@ -503,6 +504,11 @@ class FoodDetailFragment : Fragment(), TextWatcher {
         }
         val dialog = builder.create()
         dialog.show()
+    }
+    override fun onDestroy() {
+        EventBus.getDefault().postSticky(MenuItemBack())
+        super.onDestroy()
+
     }
 
 }

@@ -15,6 +15,7 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -178,9 +179,29 @@ class MainActivity : AppCompatActivity() {
 }
 
     private fun gotoHomeActivity(userModel: UserModel?) {
-        Common.currentUser = userModel!!
-        startActivity(Intent(this@MainActivity,HomeActivity::class.java))
-        finish()
+
+        FirebaseInstanceId.getInstance().instanceId.addOnFailureListener { e -> Toast.makeText(this@MainActivity,""+e.message,Toast.LENGTH_SHORT).show()
+
+            Common.currentUser = userModel!!
+//            Common.currentToken = token!!
+
+            startActivity(Intent(this@MainActivity,HomeActivity::class.java))
+            finish()
+        }
+            .addOnCompleteListener { task -> if (task.isSuccessful){
+
+
+                Common.currentUser = userModel!!
+//                Common.currentToken = token!!
+                Common.updateToken(this@MainActivity,task.result!!.token)
+
+                startActivity(Intent(this@MainActivity,HomeActivity::class.java))
+                finish()
+
+            }
+            }
+
+
 
     }
 

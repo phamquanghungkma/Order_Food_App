@@ -17,11 +17,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.tofukma.orderapp.Adapter.MyOrderAdapter
 import com.tofukma.orderapp.CallBack.ILoadOrderCallbackListener
+import com.tofukma.orderapp.EventBus.MenuItemBack
 import com.tofukma.orderapp.Model.Order
 import com.tofukma.orderapp.R
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.ViewModel.vieworder.ViewOrderModel
 import dmax.dialog.SpotsDialog
+import org.greenrobot.eventbus.EventBus
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -103,6 +105,11 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
 
     override fun onLoadOrderFailed(message: String) {
         dialog.dismiss()
+    }
+    override fun onDestroy() {
+        EventBus.getDefault().postSticky(MenuItemBack())
+        super.onDestroy()
+
     }
 
 
