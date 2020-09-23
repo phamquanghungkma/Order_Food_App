@@ -1,13 +1,18 @@
 package com.tofukma.orderapp.View.CategoryUI
 
 import android.app.AlertDialog
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
+import android.widget.EditText
+import android.widget.ImageView
+
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -16,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
 import com.tofukma.orderapp.EventBus.MenuItemBack
+import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Utils.SpacesItemDecoration
 import com.tofukma.orderapp.R
@@ -56,6 +62,7 @@ class MenuFragment : Fragment() {
     }
 
     private fun initViews(root:View) {
+        setHasOptionsMenu(true)
         dialog = SpotsDialog.Builder().setContext(context).setCancelable(false).build()
         dialog.show()
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(context,R.anim.layout_item_from_left)
@@ -86,6 +93,50 @@ class MenuFragment : Fragment() {
             )
         )
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+       inflater.inflate(R.menu.search_menu,menu)
+        val menuItem = menu.findItem(R.id.action_search)
+        val searchManager = activity!!.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = menuItem.actionView as SearchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity!!.componentName))
+        //Event
+        searchView.setOnQueryTextListener(object:SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(s: String?): Boolean {
+                startSearch(s!!)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+               return false
+            }
+        })
+
+        //Clear text when click to clear button on Search View
+        val closeButton = searchView.findViewById<View>(R.id.search_close_btn) as ImageView
+        closeButton.setOnClickListener{
+            val ed  = searchView.findViewById<View>(R.id.search_src_text) as EditText
+            //clear text
+            ed.setText(" ")
+            //clearQuery
+            searchView.setQuery("",false)
+            //collapse the search widget
+            searchView.onActionViewCollapsed()
+
+            menuItem.collapseActionView()
+            //Restore result to original
+            menuViewModel.loadCategory()
+        }
+    }
+    private fun startSearch(s:String){
+        val resultCategory = ArrayList<CategoryModel>()
+        for (i in 0 until adapter!!.getCategoryList().size){
+            val categoryModel = adapter!!.getCategoryList()[i]
+            if(categoryModel.name!!.toLowerCase().contains(s))
+                resultCategory.add(categoryModel)
+        }
+        menuViewModel.getCategoryList().value = resultCategory
     }
     override fun onDestroy() {
         EventBus.getDefault().postSticky(MenuItemBack())

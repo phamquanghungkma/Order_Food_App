@@ -84,5 +84,7 @@ class MyCategoriesAdapter (internal var context: Context, internal var categorie
         return super.getItemViewType(position)
     }
 
-
+        fun getCategoryList() :List<CategoryModel>{
+            return categoriesList
+        }
 }

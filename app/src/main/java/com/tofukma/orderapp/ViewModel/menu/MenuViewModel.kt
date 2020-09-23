@@ -50,7 +50,7 @@ class MenuViewModel : ViewModel(), ICategoryCallBackListener {
         return categoriesListMutable!!
     }
 
-    private fun loadCategory() {
+     fun loadCategory() {
         val tempList = ArrayList<CategoryModel>()
         val categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_REF)
         categoryRef.addListenerForSingleValueEvent(object: ValueEventListener {

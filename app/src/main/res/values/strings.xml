@@ -22,6 +22,7 @@
     <string name="size">Size</string>
     <string name="add_on">Add on</string>
     <string name="sign_out">Sign_out</string>
+    <string name="action_search">Search</string>
     <string name="nav_cart">Cart</string>
     <string name="action_clear_cart">Clear Cart</string>
 

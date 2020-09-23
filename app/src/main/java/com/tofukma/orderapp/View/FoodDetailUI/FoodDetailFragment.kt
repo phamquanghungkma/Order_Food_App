@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -233,6 +234,7 @@ class FoodDetailFragment : Fragment(), TextWatcher {
     }
 
     private fun initViews(root: View?) {
+        (activity as AppCompatActivity).supportActionBar!!.setTitle(Common.foodSelected!!.name)
         cartDataSource = LocalCartDataSource(CartDatabase.getInstance(context!!).cartDAO())
         addonBottomSheetDialog = BottomSheetDialog(context!!, R.style.DialogStyle)
         val layout_user_selected_addon = layoutInflater.inflate(R.layout.layout_addon_display, null)
