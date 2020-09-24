@@ -20,6 +20,8 @@ class MyFCMServices : FirebaseMessagingService(){
             Common.showNotification(this,
                 Random().nextInt(),dataRev[Common.NOTI_TITLE],dataRev[Common.NOTI_CONTENT],null)
         }
+
+
     }
 
 
