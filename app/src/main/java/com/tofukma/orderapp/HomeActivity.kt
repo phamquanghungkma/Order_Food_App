@@ -8,6 +8,9 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import android.app.AlertDialog
+import android.text.TextUtils
+import android.view.LayoutInflater
+import android.widget.EditText
 //import androidx.appcompat.app.AlertDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -21,6 +24,12 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
+import com.google.android.gms.common.api.Status
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -33,6 +42,7 @@ import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.*
 import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Model.FoodModel
+import com.tofukma.orderapp.Model.UserModel
 import dmax.dialog.SpotsDialog
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,8 +52,19 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.*
+import kotlin.collections.HashMap
 
 class HomeActivity : AppCompatActivity() {
+
+    private var placeSelected: Place?=null
+    private var places_fragment: AutocompleteSupportFragment?=null
+    private lateinit var placeClient: PlacesClient
+    private val placeFields = Arrays.asList(Place.Field.ID,
+        Place.Field.NAME,
+        Place.Field.ADDRESS,
+        Place.Field.LAT_LNG
+    )
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
@@ -123,13 +144,93 @@ class HomeActivity : AppCompatActivity() {
                     if(menuItemClick != p0.itemId)
                     navController.navigate(R.id.nav_view_order)
                 }
+                else if(p0.itemId == R.id.nav_update_info)
+                {
+                    showUpadateInfoDialog()
+                }
 
                 menuItemClick = p0!!.itemId
                 return true
             }
         })
 
+        initPlacesClient()
        countCartItem()
+    }
+
+    private fun initPlacesClient() {
+        Places.initialize(this,getString(R.string.google_maps_key))
+        placeClient = Places.createClient(this)
+    }
+
+    private fun showUpadateInfoDialog() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("REGISTER")
+        builder.setMessage("Please fill information")
+
+        val itemView = LayoutInflater.from(this@HomeActivity)
+            .inflate(R.layout.layout_register, null)
+
+        val edt_name = itemView.findViewById<EditText>(R.id.edt_name)
+        val edt_phone = itemView.findViewById<EditText>(R.id.edt_phone)
+
+        val txt_address = itemView.findViewById<TextView>(R.id.txt_address_detail)
+
+
+
+        places_fragment = supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment)
+                as AutocompleteSupportFragment
+        places_fragment!!.setPlaceFields(placeFields)
+        places_fragment!!.setOnPlaceSelectedListener(object: PlaceSelectionListener {
+            override fun onPlaceSelected(p0: Place) {
+                placeSelected = p0
+                txt_address.text = placeSelected!!.address
+            }
+
+            override fun onError(p0: Status) {
+                Toast.makeText(this@HomeActivity,""+p0.statusMessage,Toast.LENGTH_SHORT).show()            }
+
+
+        })
+        // set
+        edt_phone.setText(Common.currentUser!!.phone)
+        txt_address.setText(Common.currentUser!!.addrss)
+        edt_name.setText(Common.currentUser!!.name)
+
+        builder.setView(itemView)
+        builder.setNegativeButton("CANCEL", { dialogInterface, i -> dialogInterface.dismiss() })
+        builder.setPositiveButton("UPDATE", { dialogInterface, i ->
+            if(placeSelected != null ) {
+                if (TextUtils.isDigitsOnly(edt_name.text.toString())) {
+                    Toast.makeText(this@HomeActivity, "Please enter your name ", Toast.LENGTH_LONG)
+                        .show()
+                    return@setPositiveButton
+                }
+               val update_data = HashMap<String,Any>()
+                update_data.put("name",edt_name.text.toString())
+                update_data.put("address",txt_address.text.toString())
+                update_data.put("lat",placeSelected!!.latLng!!.latitude)
+                update_data.put("lng",placeSelected!!.latLng!!.longitude)
+
+                FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCE).child(Common.currentUser!!.uid!!)
+                    .updateChildren(update_data).addOnFailureListener {
+                        Toast.makeText(this@HomeActivity,it.message,Toast.LENGTH_SHORT).show()
+
+                    }.addOnSuccessListener {
+                        Toast.makeText(this@HomeActivity,"Update infor success",Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(this@HomeActivity,"Please select address",Toast.LENGTH_SHORT).show()
+            }
+        })
+        //Importan please show dialog
+        val dialog = builder.create()
+        dialog.setOnDismissListener {
+            val fragmentTransaction  = supportFragmentManager.beginTransaction()
+            fragmentTransaction.remove(places_fragment!!)
+            fragmentTransaction.commit()
+        }
+        dialog.show()
     }
 
     private fun singOut() {

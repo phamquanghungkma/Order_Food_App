@@ -42,6 +42,15 @@
             android:icon="@drawable/ic_baseline_view_headline_24"
             android:title="@string/menu_view_orders" />
     </group>
+
+    <group>
+        <item
+            android:id="@+id/nav_update_info"
+            android:icon="@drawable/ic_baseline_update_24"
+            android:title="@string/update_info" />
+    </group>
+
+
     <group android:id="@+id/user_group">
         <item
             android:id="@+id/nav_sign_out"
