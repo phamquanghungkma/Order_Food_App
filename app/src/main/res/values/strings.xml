@@ -25,6 +25,6 @@
     <string name="action_search">Search</string>
     <string name="nav_cart">Cart</string>
     <string name="action_clear_cart">Clear Cart</string>
-
+<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"> AIzaSyDFWa-0NcyAk0VaZCRc2v4IcctBcr8g5R4</string>
 
 </resources>
