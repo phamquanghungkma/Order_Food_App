@@ -27,7 +27,7 @@ import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MyOrderAdapter(private val context:Context,private val orderList:List<Order>):
+class MyOrderAdapter(private val context:Context,private val orderList:MutableList<Order>):
     RecyclerView.Adapter<MyOrderAdapter.MyViewHolder>() {
 
     internal  var calender : Calendar
@@ -45,6 +45,13 @@ class MyOrderAdapter(private val context:Context,private val orderList:List<Orde
         return orderList.size
     }
 
+    fun getItemAtPosition(position: Int):Order{
+        return orderList[position]
+
+    }
+    fun setItemAtPosition(position: Int,orderModel:Order){
+        orderList[position] = orderModel
+    }
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         Glide.with(context!!)
             .load(orderList[position].carItemList!![0].foodImage)

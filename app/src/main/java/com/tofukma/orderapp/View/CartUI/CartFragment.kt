@@ -203,41 +203,41 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
 
 
-        val swipe = object:MySwipeHelper(context!!, recycler_cart!!, 200)
-        {
+        val swipe = object:MySwipeHelper(context!!, recycler_cart!!, 200)  {
             override fun instantianteMyButton( viewHolder: RecyclerView.ViewHolder, buffer: MutableList<MyButton>
             ) {
                 buffer.add(MyButton(context!!,
-                "Delete",
-                30,
-                0,
-                Color.parseColor("#FF3C30"),
-                object:IMyButtonCallback{
-                    override fun onClick(pos: Int) {
-                        val deleteItem = adapter!!.getItemAtPosition(pos)
-                        cartDataSource!!.deleteCart(deleteItem)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(object:SingleObserver<Int>{
-                                override fun onSuccess(t: Int) {
-                                    adapter!!.notifyItemRemoved(pos)
-                                    sumCart()
-                                    EventBus.getDefault().postSticky(CountCartEvent(true))
-                                    Toast.makeText(context, "Delete item success", Toast.LENGTH_SHORT).show()
-                                }
+                    "Delete",
+                    30,
+                    0,
+                    Color.parseColor("#FF3C30"),
+                    object:IMyButtonCallback{
+                        override fun onClick(pos: Int) {
+                            val deleteItem = adapter!!.getItemAtPosition(pos)
+                            cartDataSource!!.deleteCart(deleteItem)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(object:SingleObserver<Int>{
+                                    override fun onSuccess(t: Int) {
+                                        adapter!!.notifyItemRemoved(pos)
+                                        sumCart()
+                                        EventBus.getDefault().postSticky(CountCartEvent(true))
+                                        Toast.makeText(context, "Delete item success", Toast.LENGTH_SHORT).show()
+                                    }
 
-                                override fun onSubscribe(d: Disposable) {
-                                }
+                                    override fun onSubscribe(d: Disposable) {
+                                    }
 
-                                override fun onError(e: Throwable) {
-                                    Toast.makeText(context, ""+ e.message, Toast.LENGTH_SHORT).show()
-                                }
+                                    override fun onError(e: Throwable) {
+                                        Toast.makeText(context, ""+ e.message, Toast.LENGTH_SHORT).show()
+                                    }
 
-                            })
-                    }
-                }))
+                                })
+                        }
+                    }))
             }
         }
+
 
         txt_empty_cart = root.findViewById(R.id.txt_empty_cart) as TextView
         txt_total_price = root.findViewById(R.id.txt_total_price) as TextView
