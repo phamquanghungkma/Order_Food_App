@@ -18,6 +18,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.material.textfield.TextInputLayout
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -87,7 +88,9 @@ class MainActivity : AppCompatActivity() {
         Places.initialize(this,getString(R.string.google_maps_key))
         placeClient = Places.createClient(this)
 
-        providers = Arrays.asList<AuthUI.IdpConfig>(AuthUI.IdpConfig.PhoneBuilder().build())
+        providers = Arrays.asList<AuthUI.IdpConfig>(AuthUI.IdpConfig.PhoneBuilder().build(),
+        AuthUI.IdpConfig.EmailBuilder().build()
+            )
 
         userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCE)
         firebaseAuth = FirebaseAuth.getInstance()
@@ -153,7 +156,7 @@ class MainActivity : AppCompatActivity() {
 
         val itemView = LayoutInflater.from(this@MainActivity)
             .inflate(R.layout.layout_register, null)
-
+        val phone_input_layout = itemView.findViewById<TextInputLayout>(R.id.phone_input_layout)
         val edt_name = itemView.findViewById<EditText>(R.id.edt_name)
         val edt_phone = itemView.findViewById<EditText>(R.id.edt_phone)
 
@@ -175,6 +178,18 @@ class MainActivity : AppCompatActivity() {
 
         })
         // set
+        if(user.phoneNumber == null || TextUtils.isEmpty(user.phoneNumber)){
+            phone_input_layout.hint="Email"
+            edt_phone.setText(user.email)
+            edt_name.setText(user.displayName)
+        }
+        else{
+            edt_phone.setText(user!!.phoneNumber)
+        }
+
+
+
+
         edt_phone.setText(user!!.phoneNumber)
         builder.setView(itemView)
         builder.setNegativeButton("CANCEL", { dialogInterface, i -> dialogInterface.dismiss() })
@@ -251,9 +266,12 @@ class MainActivity : AppCompatActivity() {
     private fun phoneLogin() {
 
         startActivityForResult(
-            AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers!!)
-                .build(), APP_REQUEST_CODE
-        )
+            AuthUI.getInstance().createSignInIntentBuilder()
+                .setTheme(R.style.LoginTheme)
+                .setLogo(R.drawable.logo)
+                .setAvailableProviders(providers!!).build(), APP_REQUEST_CODE)
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
