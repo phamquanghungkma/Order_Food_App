@@ -5,7 +5,9 @@
     android:background="@color/background_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/card_main_layout"
     android:padding="8dp">
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_above="@id/recycler_cart"
         android:layout_width="match_parent"
