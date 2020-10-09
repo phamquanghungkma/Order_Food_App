@@ -14,6 +14,7 @@ import android.view.animation.LayoutAnimationController
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -71,7 +72,7 @@ import kotlin.collections.HashMap
 class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
     private var placeSelected: Place?=null
-    private var places_fragment: AutocompleteSupportFragment?=null
+    private  var places_fragment: AutocompleteSupportFragment ?= null
     private lateinit var placeClient: PlacesClient
     private val placeFields = Arrays.asList(
         Place.Field.ID,
@@ -91,7 +92,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
 
     override fun onLoadTimeFailed(message: String) {
-       Toast.makeText(context!!,message,Toast.LENGTH_SHORT).show()
+        Toast.makeText(context!!,message,Toast.LENGTH_SHORT).show()
     }
 
     private var cartDataSource: CartDataSource?=null
@@ -112,7 +113,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     private lateinit var locationCallback: LocationCallback
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var currentLocation: Location
-
+    private lateinit var mainView: RelativeLayout; //= card_main_layout
 
     var layoutAnimationController:LayoutAnimationController ?= null
 
@@ -123,8 +124,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
         calculateTotalPrice()
         if(fusedLocationProviderClient != null)
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback,
-            Looper.getMainLooper()
-                )
+                Looper.getMainLooper()
+            )
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -137,7 +138,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
         val root = inflater.inflate(R.layout.frament_cart, container, false)
         initViews(root)
         initLocation()
-
+       // mainView = root.findViewById(R.id.card_main_layout)
         // hàm lắng nghe LiveData
         // fragment là các tp quan sát
         cartViewModel.getMutableLiveDataCartItem().observe(this, Observer {
@@ -180,13 +181,15 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
         locationRequest.setFastestInterval(3000)
         locationRequest.setSmallestDisplacement(10f)
     }
-    private fun initPlacesClient(){
-        Places.initialize(context!!,getString(R.string.google_maps_key))
-        placeClient = Places.createClient(context!!)
-    }
+
+//    private fun initPlacesClient(){
+//        Places.initialize(context!!,getString(R.string.google_maps_key))
+//        placeClient = Places.createClient(context!!)
+//    }
+
     private fun initViews(root:View) {
 
-        initPlacesClient()
+//        initPlacesClient()
 
         setHasOptionsMenu(true) // Import , if not add it , menu will never be inflate
 
@@ -203,7 +206,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
 
 
-        val swipe = object:MySwipeHelper(context!!, recycler_cart!!, 200)  {
+        val swipe = object:MySwipeHelper(context!!, recycler_cart!!, 200)
+        {
             override fun instantianteMyButton( viewHolder: RecyclerView.ViewHolder, buffer: MutableList<MyButton>
             ) {
                 buffer.add(MyButton(context!!,
@@ -238,7 +242,6 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
             }
         }
 
-
         txt_empty_cart = root.findViewById(R.id.txt_empty_cart) as TextView
         txt_total_price = root.findViewById(R.id.txt_total_price) as TextView
         group_place_holder = root.findViewById(R.id.group_place_holder) as CardView
@@ -248,44 +251,30 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
         // Event
         btn_place_order.setOnClickListener{
-            val builder = AlertDialog.Builder(context!!)
+            val builder = AlertDialog.Builder(activity!!)
             builder.setTitle(" Địa chỉ nhận hàng  !")
+            // cho nay o dang muon lam gi??. hien thi view nay de len man hinh nay a?
 
-            val view = LayoutInflater.from(context).inflate(R.layout.layout_place_order,null)
+            val view = LayoutInflater.from(activity).inflate(R.layout.layout_place_order,null)
+            // mainView.addView(view);
+            val edt_address = view!!.findViewById<View>(R.id.edt_address) as EditText
+            val edt_comment = view!!.findViewById<View>(R.id.edt_comment) as EditText
+            val txt_address = view!!.findViewById<View>(R.id.txt_address_detail) as TextView
 
-            val edt_comment = view.findViewById<View>(R.id.edt_comment) as EditText
-            val txt_address = view.findViewById<View>(R.id.txt_address_detail) as TextView
-
-            val rdi_home = view.findViewById<View>(R.id.rdi_home_address) as RadioButton
+            val rdi_home = view!!.findViewById<View>(R.id.rdi_home_address) as RadioButton
 //            val rdi_other_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
-            val rdi_ship_to_this_address = view.findViewById<View>(R.id.rdi_ship_this_address) as RadioButton
+            val rdi_ship_to_this_address = view!!.findViewById<View>(R.id.rdi_ship_this_address) as RadioButton
 
-            val rdi_cod = view.findViewById<View>(R.id.rdi_cod) as RadioButton
-            val rdi_braintree = view.findViewById<View>(R.id.rdi_braintree) as RadioButton
-
-
-            places_fragment = activity!!.supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment)
-                    as AutocompleteSupportFragment
-
-            places_fragment!!.setPlaceFields(placeFields)
-            places_fragment!!.setOnPlaceSelectedListener(object: PlaceSelectionListener {
-                override fun onPlaceSelected(p0: Place) {
-                    placeSelected = p0
-                    txt_address.text = placeSelected!!.address
-                }
-
-                override fun onError(p0: Status) {
-                    Toast.makeText(context,""+p0.statusMessage,Toast.LENGTH_SHORT).show()            }
-
-
-            })
+            val rdi_cod = view!!.findViewById<View>(R.id.rdi_cod) as RadioButton
+            val rdi_braintree = view!!.findViewById<View>(R.id.rdi_braintree) as RadioButton
+            // loi o day la do  activity!!.supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment) khong tim thay element nay tren view
 
             // Data
-            txt_address.setText(Common.currentUser!!.addrss!!)
+            edt_address.setText(Common.currentUser!!.addrss!!)
 
             rdi_home.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
-                    txt_address.setText(Common.currentUser!!.addrss!!)
+                    edt_address.setText(Common.currentUser!!.addrss!!)
                 }
 
             }
@@ -299,119 +288,145 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 //            }
             rdi_ship_to_this_address.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
-                       fusedLocationProviderClient!!.lastLocation
-                           .addOnFailureListener{ e ->
-                               txt_address.visibility = View.GONE
-                               Toast.makeText(context!!,""+e.message,Toast.LENGTH_SHORT).show()}
-                           .addOnCompleteListener{
-                               task ->
-                               val coordinates = StringBuilder()
-                                   .append(task.result!!.latitude)
-                                   .append("/")
-                                   .append(task.result!!.longitude)
-                                   .toString()
-                                val singleAddress = Single.just(getAddressFromLatLng(task.result!!.latitude,task.result!!.longitude))
-                              val disposable = singleAddress.subscribeWith(object:DisposableSingleObserver<String>(){
-                                  override fun onSuccess(t: String) {
+                    fusedLocationProviderClient!!.lastLocation
+                        .addOnFailureListener{ e ->
+                            txt_address.visibility = View.GONE
+                            Toast.makeText(context!!,""+e.message,Toast.LENGTH_SHORT).show()}
+                        .addOnCompleteListener{
+                                task ->
+                            val coordinates = StringBuilder()
+                                .append(task.result!!.latitude)
+                                .append("/")
+                                .append(task.result!!.longitude)
+                                .toString()
+                            val singleAddress = Single.just(getAddressFromLatLng(task.result!!.latitude,task.result!!.longitude))
+                            val disposable = singleAddress.subscribeWith(object:DisposableSingleObserver<String>(){
+                                override fun onSuccess(t: String) {
 
-                                      txt_address.setText(t)
-                                  }
+                                    edt_address.setText(t)
+                                }
 
-                                  override fun onError(e: Throwable) {
+                                override fun onError(e: Throwable) {
 
-                                      txt_address.setText(e.message!!)
-                                  }
-                              })
+                                    edt_address.setText(e.message!!)
+                                }
+                            })
 
 
 
-                           }
-                    }
+                        }
+                }
 
             }
 
             builder.setView(view)
             builder.setNegativeButton("NO",{dialog, _ ->dialog.dismiss()})
                 .setPositiveButton("YES",{
-                    dialog, _ -> if(rdi_cod.isChecked)
-                        paymentCOD(txt_address.text.toString(),edt_comment.text.toString())
+                        dialog, _ -> if(rdi_cod.isChecked)
+                    paymentCOD(txt_address.text.toString(),edt_comment.text.toString())
                 })
+
+//            var fragmentAddress = AutocompleteSupportFragment.newInstance()
+//            if (fragmentAddress.view == null){
+//                print("Loi 1")
+//            } else {
+//                view.findViewById<LinearLayout>(R.id.oder_main_view).addView(fragmentAddress.view,0)
+//            }
+
             val dialog = builder.create()
             dialog.show()
 
+
+
+            //   fragmentAddress = this.activity!!.supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment) as AutocompleteSupportFragment
+            /*places_fragment = (context!! as FragmentActivity).supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment)
+                    as AutocompleteSupportFragment
+            */
+//            fragmentAddress!!.setPlaceFields(placeFields)
+//            fragmentAddress!!.setOnPlaceSelectedListener(object: PlaceSelectionListener {
+//                override fun onPlaceSelected(p0: Place) {
+//                    placeSelected = p0
+//                    txt_address.text = placeSelected!!.address
+//                }
+//
+//                override fun onError(p0: Status) {
+//                    Toast.makeText(context,""+p0.statusMessage,Toast.LENGTH_SHORT).show()            }
+//
+//
+//            })
         }
     }
 
     private fun paymentCOD(address: String, comment: String) {
-            compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                        cartItemList ->
-                        // when we have all cartItem, we will get total price\
-                    if (cartDataSource == null){
+        compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                    cartItemList ->
+                // when we have all cartItem, we will get total price\
+                if (cartDataSource == null){
 
-                        Log.d("LOI","do cartDataSource null");
-                    }
-                    if (Common.currentUser == null){
+                    Log.d("LOI","do cartDataSource null");
+                }
+                if (Common.currentUser == null){
 
-                        Log.d("LOI","do Common.currentUser null");
-                    }
-                    if (Common.currentUser!!.uid == null){
+                    Log.d("LOI","do Common.currentUser null");
+                }
+                if (Common.currentUser!!.uid == null){
 
-                        Log.d("LOI","do Common.currentUser.uid null");
-                    }
-                    cartDataSource!!.sumPrice(Common.currentUser!!.uid!!)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object: SingleObserver<Double>{
-                            override fun onSuccess(totalPrice: Double) {
-                                val finalPrice = totalPrice
-                                val order = Order()
-                                order.userId = Common.currentUser!!.uid!!
-                                order.userName = Common.currentUser!!.name!!
-                                order.userPhone = Common.currentUser!!.phone
-                                order.shippingAddress = address
-                                order.comment = comment
-                                if(currentLocation != null) {
-                                    order.lat = currentLocation!!.latitude
-                                    order.lng = currentLocation!!.longitude
-                                    }
-                                order.carItemList = cartItemList
-                                order.totalPayment = totalPrice
-                                order.finalPayment = finalPrice
-                                order.discount = 0
-                                order.isCod = true
-                                order.transactionId = "Thanh toán khi nhận hàng "
-
-                                syncLocalTimeWithServerTime(order)
-
-
+                    Log.d("LOI","do Common.currentUser.uid null");
+                }
+                cartDataSource!!.sumPrice(Common.currentUser!!.uid!!)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object: SingleObserver<Double>{
+                        override fun onSuccess(totalPrice: Double) {
+                            val finalPrice = totalPrice
+                            val order = Order()
+                            order.userId = Common.currentUser!!.uid!!
+                            order.userName = Common.currentUser!!.name!!
+                            order.userPhone = Common.currentUser!!.phone
+                            order.shippingAddress = address
+                            order.comment = comment
+                            if(currentLocation != null) {
+                                order.lat = currentLocation!!.latitude
+                                order.lng = currentLocation!!.longitude
                             }
+                            order.carItemList = cartItemList
+                            order.totalPayment = totalPrice
+                            order.finalPayment = finalPrice
+                            order.discount = 0
+                            order.isCod = true
+                            order.transactionId = "Thanh toán khi nhận hàng "
 
-                            override fun onSubscribe(d: Disposable) {
-                                    Log.d("LOI","FIXED!!!")
-                             }
-
-                            override fun onError(e: Throwable) {
-                                if(!e.message!!.contains("Query returned emtpy"))
-                                    Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
-                            }
-
-
-                        })
+                            syncLocalTimeWithServerTime(order)
 
 
-                },{ throwable -> Toast.makeText(context!!,"BI LOI "+throwable.message,Toast.LENGTH_SHORT).show()
-                    throwable.printStackTrace()
-                     Log.d("LOI",throwable.message.toString())
+                        }
+
+                        override fun onSubscribe(d: Disposable) {
+                            Log.d("LOI","FIXED!!!")
+                        }
+
+                        override fun onError(e: Throwable) {
+                            if(!e.message!!.contains("Query returned emtpy"))
+                                Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
+                        }
+
+
+                    })
+
+
+            },{ throwable -> Toast.makeText(context!!,"BI LOI "+throwable.message,Toast.LENGTH_SHORT).show()
+                throwable.printStackTrace()
+                Log.d("LOI",throwable.message.toString())
             })
-            )
+        )
 
     }
 
     private fun pushOrderToServer(order: Order) {
         FirebaseDatabase.getInstance().getReference(Common.ORDER_REF).child(Common.createOrderNumber())
             .setValue(order).addOnFailureListener{
-                e -> Toast.makeText(context!!,""+e.message,Toast.LENGTH_LONG).show()
+                    e -> Toast.makeText(context!!,""+e.message,Toast.LENGTH_LONG).show()
             }
             .addOnCompleteListener { task ->
 
@@ -446,7 +461,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                             }
 
                             override fun onSubscribe(d: Disposable) {
-                              Log.d("LOI","FIXED LOI 3")
+                                Log.d("LOI","FIXED LOI 3")
                             }
 
                             override fun onError(e: Throwable) {
@@ -614,29 +629,29 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
     }
 
-private fun syncLocalTimeWithServerTime(order: Order){
-    val offsetRef = FirebaseDatabase.getInstance().getReference(".info/serverTimeOffset")
-    offsetRef.addListenerForSingleValueEvent(object: ValueEventListener{
-        override fun onCancelled(error: DatabaseError) {
+    private fun syncLocalTimeWithServerTime(order: Order){
+        val offsetRef = FirebaseDatabase.getInstance().getReference(".info/serverTimeOffset")
+        offsetRef.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
                 listener.onLoadTimeFailed(error.message)
-        }
+            }
 
-        override fun onDataChange(snapshot: DataSnapshot) {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 val offset =  snapshot.getValue(Long::class.java)
                 val estimatedServerTimeInMs = System.currentTimeMillis() + offset!! // them missing offset vao current time
                 val sdf = SimpleDateFormat("MMM dd yyyy, HH:mm")
                 val date = Date(estimatedServerTimeInMs)
                 Log.d("TofuKMA",""+sdf.format(date))
                 Log.d("TofuKMA1",""+estimatedServerTimeInMs)
-                    if(estimatedServerTimeInMs is Long){
-                        Log.d("Type  ","Type is Long")
+                if(estimatedServerTimeInMs is Long){
+                    Log.d("Type  ","Type is Long")
 
-                    }
+                }
                 listener.onLoadTimeSuccess(order,estimatedServerTimeInMs)
-        }
+            }
 
-    })
-}
+        })
+    }
 
     override fun onDestroy() {
         EventBus.getDefault().postSticky(MenuItemBack())
