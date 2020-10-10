@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.androidwidgets.formatedittext.widgets.FormatEditText
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -27,6 +29,7 @@ import com.tofukma.orderapp.Model.Order
 import com.tofukma.orderapp.R
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Utils.MySwipeHelper
+import com.tofukma.orderapp.ViewModel.vieworder.RefundRequestModel
 import com.tofukma.orderapp.ViewModel.vieworder.ViewOrderModel
 import dmax.dialog.SpotsDialog
 import io.reactivex.SingleObserver
@@ -118,34 +121,98 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                         override fun onClick(pos: Int) {
                             val orderModel = (recycler_order.adapter as MyOrderAdapter).getItemAtPosition(pos)
                             if(orderModel.orderStatus == 0){
-                            val builder = androidx.appcompat.app.AlertDialog.Builder(context!!)
-                                builder.setTitle("Cancel Order")
-                                    .setMessage("Ban thuc su muon huy don hang?")
-                                    .setNegativeButton("Khong"){dialogInterface, i ->
-                                        dialogInterface.dismiss()
-                                    }
-                                    .setPositiveButton("Co"){dialog: DialogInterface?,i->
-                                        val update_data = HashMap<String,Any>()
-                                        update_data.put("orderStatus",-1) //cancel order
-                                        FirebaseDatabase.getInstance()
-                                            .getReference(Common.ORDER_REF)
-                                            .child(orderModel.orderNumber!!)
-                                            .updateChildren(update_data)
-                                            .addOnFailureListener{e ->
-                                                Toast.makeText(context!!,e.message,Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                            .addOnSuccessListener {
-                                                orderModel.orderStatus = -1 //Local update
-                                              (recycler_order.adapter as MyOrderAdapter).setItemAtPosition(pos,orderModel)
-                                                (recycler_order.adapter as MyOrderAdapter).notifyItemChanged(pos) //update
-                                                Toast.makeText(context!!,"Huy don hang thanh cong",Toast.LENGTH_SHORT).show()
-                                            }
-                                    }
+                                if(orderModel.isCod){
+                                    val builder = androidx.appcompat.app.AlertDialog.Builder(context!!)
+                                    builder.setTitle("Cancel Order")
+                                        .setMessage("Ban thuc su muon huy don hang?")
+                                        .setNegativeButton("Khong"){dialogInterface, i ->
+                                            dialogInterface.dismiss()
+                                        }
+                                        .setPositiveButton("Co"){dialog: DialogInterface?,i->
+                                            val update_data = HashMap<String,Any>()
+                                            update_data.put("orderStatus",-1) //cancel order
+                                            FirebaseDatabase.getInstance()
+                                                .getReference(Common.ORDER_REF)
+                                                .child(orderModel.orderNumber!!)
+                                                .updateChildren(update_data)
+                                                .addOnFailureListener{e ->
+                                                    Toast.makeText(context!!,e.message,Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                                .addOnSuccessListener {
+                                                    orderModel.orderStatus = -1 //Local update
+                                                    (recycler_order.adapter as MyOrderAdapter).setItemAtPosition(pos,orderModel)
+                                                    (recycler_order.adapter as MyOrderAdapter).notifyItemChanged(pos) //update
+                                                    Toast.makeText(context!!,"Huy don hang thanh cong",Toast.LENGTH_SHORT).show()
+                                                }
+                                        }
                                     val dialog = builder.create()
                                     dialog.show()
+                                }
+                                else{
+                                    val view = LayoutInflater.from(context!!)
+                                        .inflate(R.layout.layout_refund_request,null)
 
-                            }else{
+                                    val edt_name = view.findViewById<EditText>(R.id.edt_card_name)
+                                    val edt_card_number = view.findViewById<FormatEditText>(R.id.edt_card_number)
+                                    val edt_card_exp = view.findViewById<FormatEditText>(R.id.edt_exp)
+
+                                    //set Format
+
+                                    edt_card_number.setFormat("---- ---- ---- ----")
+                                    edt_card_exp.setFormat("--/--")
+
+                                    val builder = androidx.appcompat.app.AlertDialog.Builder(context!!)
+                                    builder.setTitle("Cancel Order")
+                                        .setMessage("Ban thuc su muon huy don hang?")
+                                        .setView(view)
+                                        .setNegativeButton("Khong"){dialogInterface, i ->
+                                            dialogInterface.dismiss()
+                                        }
+                                        .setPositiveButton("Co"){dialog: DialogInterface?,i->
+
+                                          val refundRequestModel = RefundRequestModel()
+                                            refundRequestModel.name = Common.currentUser!!.name!!
+                                            refundRequestModel.phone = Common.currentUser!!.phone!!
+                                            refundRequestModel.cardNumber = edt_card_number.text.toString()
+                                            refundRequestModel.cardExp = edt_card_exp.text.toString()
+                                            refundRequestModel.amount = orderModel.finalPayment
+                                            refundRequestModel.cardName = edt_name.text.toString()
+
+                                            FirebaseDatabase.getInstance()
+                                                .getReference(Common.REFUND_REQUEST_REF)
+                                                .child(orderModel.orderNumber!!)
+                                                .setValue(refundRequestModel)
+                                                .addOnFailureListener{e ->
+                                                    Toast.makeText(context!!,e.message,Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                                .addOnSuccessListener {
+                                                    //update data firebase
+                                                    val update_data = HashMap<String,Any>()
+                                                    update_data.put("orderStatus",-1) //cancel order
+                                                    FirebaseDatabase.getInstance()
+                                                        .getReference(Common.ORDER_REF)
+                                                        .child(orderModel.orderNumber!!)
+                                                        .updateChildren(update_data)
+                                                        .addOnFailureListener{e ->
+                                                            Toast.makeText(context!!,e.message,Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+                                                        .addOnSuccessListener {
+                                                            orderModel.orderStatus = -1 //Local update
+                                                            (recycler_order.adapter as MyOrderAdapter).setItemAtPosition(pos,orderModel)
+                                                            (recycler_order.adapter as MyOrderAdapter).notifyItemChanged(pos) //update
+                                                            Toast.makeText(context!!,"Huy don hang thanh cong",Toast.LENGTH_SHORT).show()
+                                                        }
+                                                }
+                                        }
+                                    val dialog = builder.create()
+                                    dialog.show()
+                                }
+
+                            }
+                            else{
                                 Toast.makeText(context!!,StringBuilder("Trang thai don hang cua ban da duoc thay doi ")
                                     .append(Common.convertStatusToText(orderModel.orderStatus))
                                     .append(" ,nen ban ko the huy no"),Toast.LENGTH_SHORT

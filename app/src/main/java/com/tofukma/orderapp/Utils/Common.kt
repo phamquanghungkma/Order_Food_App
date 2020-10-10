@@ -33,6 +33,7 @@ import kotlin.random.Random
 
 object Common {
 
+    val REFUND_REQUEST_REF: String="RefundRequest"
     const val TOKEN_REF =  "TOKENS"
     const val NOTI_TITLE = "title"
     const val NOTI_CONTENT = "content"
