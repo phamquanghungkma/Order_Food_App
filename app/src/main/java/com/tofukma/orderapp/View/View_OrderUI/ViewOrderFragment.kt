@@ -2,8 +2,11 @@ package com.tofukma.orderapp.View.View_OrderUI
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
+import android.net.sip.SipSession
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +23,16 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.tofukma.orderapp.Adapter.MyOrderAdapter
 import com.tofukma.orderapp.CallBack.ILoadOrderCallbackListener
 import com.tofukma.orderapp.CallBack.IMyButtonCallback
 import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.EventBus.MenuItemBack
 import com.tofukma.orderapp.Model.Order
+import com.tofukma.orderapp.Model.ShippingOrderModel
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.TrackingOrderActivity
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Utils.MySwipeHelper
 import com.tofukma.orderapp.ViewModel.vieworder.RefundRequestModel
@@ -109,6 +115,8 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
             val layoutManager = LinearLayoutManager(requireContext())
             recycler_order.layoutManager = layoutManager
             recycler_order.addItemDecoration(DividerItemDecoration(context!!,layoutManager.orientation))
+
+
         val swipe = object: MySwipeHelper(context!!, recycler_order!!, 250)  {
             override fun instantianteMyButton( viewHolder: RecyclerView.ViewHolder, buffer: MutableList<MyButton>
             ) {
@@ -218,6 +226,43 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                                     .append(" ,nen ban ko the huy no"),Toast.LENGTH_SHORT
                                 ).show()
                             }
+                        }
+                    }))
+
+                //Tracking Buuton
+
+                buffer.add(MyButton(context!!,
+                    "Tracking Order ",
+                    30,
+                    0,
+                    Color.parseColor("#001970"),
+                    object: IMyButtonCallback {
+                        override fun onClick(pos: Int) {
+                            val orderModel = (recycler_order.adapter as MyOrderAdapter).getItemAtPosition(pos)
+                            //Log.d("Test",orderModel.orderNumber)
+                                FirebaseDatabase.getInstance()
+                                    .getReference(Common.SHIPPING_ORDER_REF)
+                                    .child(orderModel.orderNumber!!)
+                                    .addListenerForSingleValueEvent(object:ValueEventListener{
+                                        override fun onCancelled(p0: DatabaseError) {
+                                        Toast.makeText(context!!,p0.message,Toast.LENGTH_SHORT).show()
+                                        }
+
+                                        override fun onDataChange(p0: DataSnapshot) {
+                                         //   Log.d("TEst", p0.exists().toString())
+                                        if(p0.exists()){
+                                        Common.currentShippingOrder = p0.getValue(ShippingOrderModel::class.java)
+                                            if(Common.currentShippingOrder!!.currentLat!! != -1.0
+                                                && Common.currentShippingOrder!!.currentLng!! != -1.0){
+                                            startActivity(Intent(context!!, TrackingOrderActivity::class.java))
+                                            }else{
+                                                Toast.makeText(context!!,"Don hang cua ban chua duoc van chuyen, vui long cho doi",Toast.LENGTH_SHORT).show()
+                                            }
+                                        }else{
+                                            Toast.makeText(context!!,"Ban vua dat hang ! Don hang cua ban se duoc giao sau it phut",Toast.LENGTH_SHORT).show()
+                                        }
+                                        }
+                                    })
                         }
                     }))
             }

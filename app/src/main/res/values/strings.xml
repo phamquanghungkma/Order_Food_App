@@ -27,5 +27,6 @@
     <string name="update_info">Update Info</string>
 
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"> AIzaSyDFWa-0NcyAk0VaZCRc2v4IcctBcr8g5R4</string>
+    <string name="title_activity_tracking_order">Map</string>
 
 </resources>
