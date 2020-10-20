@@ -252,6 +252,7 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                                          //   Log.d("TEst", p0.exists().toString())
                                         if(p0.exists()){
                                         Common.currentShippingOrder = p0.getValue(ShippingOrderModel::class.java)
+                                            Common.currentShippingOrder!!.key = p0.key
                                             if(Common.currentShippingOrder!!.currentLat!! != -1.0
                                                 && Common.currentShippingOrder!!.currentLng!! != -1.0){
                                             startActivity(Intent(context!!, TrackingOrderActivity::class.java))
