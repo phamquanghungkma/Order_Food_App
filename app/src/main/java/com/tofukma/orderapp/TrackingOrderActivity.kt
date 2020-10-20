@@ -1,16 +1,21 @@
 package com.tofukma.orderapp
 
+import android.Manifest
 import android.animation.ValueAnimator
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.animation.LinearInterpolator
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,16 +24,25 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.*
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import com.tofukma.orderapp.Model.ShippingOrderModel
 import com.tofukma.orderapp.Remote.IGoogleAPI
 import com.tofukma.orderapp.Remote.RetrofitGoogleAPIClient
 import com.tofukma.orderapp.Utils.Common
+import com.tofukma.orderapp.Utils.MyCustomInforWindow
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_tracking_order.*
 import org.json.JSONObject
 import java.lang.Exception
 import java.lang.StringBuilder
+
 
 class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback, ValueEventListener {
 
@@ -68,6 +82,44 @@ class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback, ValueEven
 
 
         subscribeShipperMove()
+        initView()
+    }
+
+    private fun initView() {
+        btn_call.setOnClickListener{
+        val intent = Intent(Intent.ACTION_CALL)
+            intent.data = Uri.parse(StringBuilder("Tel:").append(Common.currentShippingOrder!!.shipperPhone).toString())
+            if(ActivityCompat.checkSelfPermission(
+                    this,
+                Manifest.permission.CALL_PHONE
+                    ) != PackageManager.PERMISSION_GRANTED){
+                Dexter.withActivity(this)
+                    .withPermission(Manifest.permission.CALL_PHONE)
+                    .withListener(object:PermissionListener{
+                        override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+
+                        }
+
+                        override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                            Toast.makeText(this@TrackingOrderActivity,"Ban co cho phep quyen thuc hien cuoc goi",Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onPermissionRationaleShouldBeShown(
+                            permission: PermissionRequest?,
+                            token: PermissionToken?
+                        ) {
+                            TODO("Not yet implemented")
+                        }
+                    } ).check()
+                return@setOnClickListener
+            }
+
+
+
+
+            startActivity(intent)
+        }
+
     }
 
     private fun subscribeShipperMove() {
@@ -89,6 +141,8 @@ class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback, ValueEven
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setInfoWindowAdapter(MyCustomInforWindow(layoutInflater))
+
         mMap!!.uiSettings.isZoomControlsEnabled = true
         try {
 
@@ -125,9 +179,15 @@ class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback, ValueEven
 
             shipperMarket = mMap.addMarker(MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(resizer))
-                .title(Common.currentShippingOrder!!.shipperName)
-                .snippet(Common.currentShippingOrder!!.shipperPhone)
+                .title(StringBuilder("Shipper: ").append(Common.currentShippingOrder!!.shipperName).toString())
+                .snippet(StringBuilder("Phone: ").append(Common.currentShippingOrder!!.shipperPhone)
+                    .append("\n")
+                    .append("Estimate Delivery Time: ")
+                    .append(Common.currentShippingOrder!!.estimateTime).toString()
+                )
                 .position(locationShipper))
+
+            shipperMarket!!.showInfoWindow() //alway show window
 
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationShipper,18.0f))
 
