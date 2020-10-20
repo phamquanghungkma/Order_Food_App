@@ -10,6 +10,8 @@ import android.widget.Toast
 import android.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.CheckBox
 import android.widget.EditText
 //import androidx.appcompat.app.AlertDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -35,6 +37,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
@@ -44,6 +47,7 @@ import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.Model.UserModel
 import dmax.dialog.SpotsDialog
+import io.paperdb.Paper
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -52,6 +56,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -148,14 +153,59 @@ class HomeActivity : AppCompatActivity() {
                 {
                     showUpadateInfoDialog()
                 }
-
+                else if(p0.itemId == R.id.nav_news)
+                {
+                    showNewsDialog()
+                }
                 menuItemClick = p0!!.itemId
                 return true
             }
+
+
         })
 
         initPlacesClient()
        countCartItem()
+    }
+
+    private fun showNewsDialog() {
+
+        Paper.init(this)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("News System")
+        builder.setMessage("Ban Co Muon Dang Ky Tin")
+
+        val itemView = LayoutInflater.from(this@HomeActivity)
+            .inflate(R.layout.layout_subscribe_news, null)
+        val ckb_news = itemView.findViewById<View>(R.id.ckb_subscribe_news) as CheckBox
+        val isSubscribeNews = Paper.book().read<Boolean>(Common.IS_SUBSCRIBE_NEWS,false)
+        if(isSubscribeNews) ckb_news.isChecked = true
+        builder.setNegativeButton("CANCEL",{dialogInterface, i -> dialogInterface.dismiss()  })
+        builder.setPositiveButton("SEND",{dialogInterface, i ->
+            if(ckb_news.isChecked){
+                Paper.book().write(Common.IS_SUBSCRIBE_NEWS,true)
+                FirebaseMessaging.getInstance().subscribeToTopic(Common.NEWS_TOPIC)
+                    .addOnFailureListener{e:Exception->
+                        Toast.makeText(this,e.message,Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnSuccessListener { aVoid:Void? ->
+                        Toast.makeText(this,"Dang Ky Thanh Cong",Toast.LENGTH_SHORT).show()
+                    }
+            }
+            else{
+
+                Paper.book().delete(Common.IS_SUBSCRIBE_NEWS)
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(Common.NEWS_TOPIC)
+                    .addOnFailureListener{e:Exception->
+                        Toast.makeText(this,e.message,Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnSuccessListener { aVoid:Void? ->
+                        Toast.makeText(this,"Huy Dang Ky Thanh Cong",Toast.LENGTH_SHORT).show()
+                    }
+
+            }
+
+        })
     }
 
     private fun initPlacesClient() {
