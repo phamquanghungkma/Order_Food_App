@@ -89,9 +89,5 @@ class MenuViewModel : ViewModel(), ICategoryCallBackListener {
                 categoryCallBackListener.onCategoryLoadSuccess(tempList)
             }
         })
-
-
-
     }
-
 }

@@ -76,6 +76,7 @@ class HomeActivity : AppCompatActivity() {
     private  var drawer : DrawerLayout?=null
     private lateinit var cartDataSource: CartDataSource
     private var dialog : AlertDialog?=null
+    private var navView: NavigationView?=null
 
     private var menuItemClick = -1
 
@@ -102,25 +103,26 @@ class HomeActivity : AppCompatActivity() {
             navController.navigate(R.id.nav_cart)
         }
         drawer = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
+        navView = findViewById(R.id.nav_view)
         navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
+                R.id.nav_restaurant,
                 R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail,
                 R.id.nav_cart
                 //R.id.nav_send
             ), drawer
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        navView!!.setupWithNavController(navController)
 
-        var headerView = navView.getHeaderView(0)
+        var headerView = navView!!.getHeaderView(0)
         var txt_user = headerView.findViewById<TextView>(R.id.txt_user)
         Common.setSpanString("Hey, ", Common.currentUser!!.name, txt_user)
 
-        navView.setNavigationItemSelectedListener(object:NavigationView.OnNavigationItemSelectedListener{
+        navView!!.setNavigationItemSelectedListener(object:NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(p0: MenuItem): Boolean {
 
                 p0.isChecked = true
@@ -128,6 +130,11 @@ class HomeActivity : AppCompatActivity() {
                 if (p0.itemId == R.id.nav_sign_out)
                 {
                     singOut()
+                }
+                else if(p0.itemId == R.id.nav_restaurant)
+                {
+                    if(menuItemClick != p0.itemId)
+                        navController.navigate(R.id.nav_restaurant)
                 }
                 else if(p0.itemId == R.id.nav_home)
                 {

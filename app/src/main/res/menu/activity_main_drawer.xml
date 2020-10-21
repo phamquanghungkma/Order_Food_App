@@ -3,66 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:id="@+id/home_group">
-        <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_baseline_home_24"
-            android:title="@string/menu_home" />
+    <group android:id="@+id/restaurant_group">
+    <item
+        android:id="@+id/nav_restaurant"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/menu_restaurant" />
     </group>
-    <group android:id="@+id/news_group">
-        <item
-            android:id="@+id/nav_news"
-            android:icon="@drawable/ic_baseline_markunread_24"
-            android:title="@string/menu_news" />
-    </group>
-    <group android:id="@+id/category_group">
-        <item
-            android:id="@+id/nav_menu"
-            android:icon="@drawable/ic_baseline_restaurant_menu_24"
-            android:title="@string/menu_category" />
-        <item
-            android:id="@+id/nav_cart"
-            android:icon="@drawable/ic_baseline_shopping_cart_24"
-            android:title="@string/menu_cart" />
-    </group>
-<!--    <item android:title="Comunicate">-->
-<!--        <menu>-->
-<!--            <item-->
-<!--                android:id="@+id/nav_send"-->
-<!--                android:icon="@drawable/ic_menu_send"-->
-<!--                android:title="Food List"-->
-<!--                />-->
-
-<!--        </menu>-->
-<!--    </item>-->
-<!--    <group android:id="@+id/cart_group">-->
-<!--        <item-->
-<!--            android:id="@+id/nav_cart"-->
-<!--            android:icon="@drawable/ic_baseline_shopping_cart_24"-->
-<!--            android:title="@string/nav_cart" />-->
-
-<!--    </group>-->
-    <group android:id="@+id/view_order_group">
-        <item
-            android:id="@+id/nav_view_order"
-            android:icon="@drawable/ic_baseline_view_headline_24"
-            android:title="@string/menu_view_orders" />
-    </group>
-
     <group>
         <item
             android:id="@+id/nav_update_info"
             android:icon="@drawable/ic_baseline_update_24"
             android:title="@string/update_info" />
     </group>
-
-
     <group android:id="@+id/user_group">
         <item
             android:id="@+id/nav_sign_out"
             android:icon="@drawable/ic_baseline_exit_to_app_24"
             android:title="@string/sign_out" />
     </group>
-
-
 </menu>
