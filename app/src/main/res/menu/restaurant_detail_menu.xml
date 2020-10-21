@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:id="@+id/restaurant_group">
+        <item
+            android:id="@+id/nav_restaurant"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="@string/menu_home" />
+    </group>
+    <group android:id="@+id/news_group">
+        <item
+            android:id="@+id/nav_news"
+            android:icon="@drawable/ic_baseline_markunread_24"
+            android:title="@string/menu_news" />
+    </group>
+
+    <group android:id="@+id/view_order_group">
+        <item
+            android:id="@+id/nav_view_order"
+            android:icon="@drawable/ic_baseline_view_headline_24"
+            android:title="@string/menu_view_orders" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/nav_update_info"
+            android:icon="@drawable/ic_baseline_update_24"
+            android:title="@string/update_info" />
+    </group>
+
+
+    <group android:id="@+id/user_group">
+        <item
+            android:id="@+id/nav_sign_out"
+            android:icon="@drawable/ic_baseline_exit_to_app_24"
+            android:title="@string/sign_out" />
+    </group>
+</menu>
