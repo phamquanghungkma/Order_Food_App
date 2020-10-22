@@ -89,7 +89,9 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
 
         val orderList  = ArrayList<Order>()
 
-        FirebaseDatabase.getInstance().getReference(Common.ORDER_REF)
+        FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
+            .child(Common.currentRestaurant!!.uid)
+            .child(Common.ORDER_REF)
             .orderByChild("userId")
             .equalTo(Common.currentUser!!.uid)
             .limitToLast(100)

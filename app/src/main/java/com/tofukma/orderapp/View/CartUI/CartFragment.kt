@@ -424,7 +424,10 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     }
 
     private fun pushOrderToServer(order: Order) {
-        FirebaseDatabase.getInstance().getReference(Common.ORDER_REF).child(Common.createOrderNumber())
+        FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
+            .child(Common.currentRestaurant!!.uid)
+            .child(Common.ORDER_REF)
+            .child(Common.createOrderNumber())
             .setValue(order).addOnFailureListener{
                     e -> Toast.makeText(context!!,""+e.message,Toast.LENGTH_LONG).show()
             }
