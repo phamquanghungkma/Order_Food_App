@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import android.app.AlertDialog
 import android.text.TextUtils
+import android.util.EventLog
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
@@ -82,7 +83,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume(){
         super.onResume()
-        countCartItem()
+//        countCartItem()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,22 +140,29 @@ class HomeActivity : AppCompatActivity() {
                 else if(p0.itemId == R.id.nav_home)
                 {
                     if(menuItemClick != p0.itemId)
-                    navController.navigate(R.id.nav_home)
+                    {
+                        EventBus.getDefault().postSticky(MenuInflateEvent(true))
+                        navController.navigate(R.id.nav_home)
+                    }
                 }
                 else if(p0.itemId == R.id.nav_cart)
                 {
-                    if(menuItemClick != p0.itemId)
-                    navController.navigate(R.id.nav_cart)
+                    if(menuItemClick != p0.itemId){
+                        EventBus.getDefault().postSticky(MenuInflateEvent(true))
+                        navController.navigate(R.id.nav_cart)}
                 }
                 else if(p0.itemId == R.id.nav_menu)
                 {
-                    if(menuItemClick != p0.itemId)
-                        navController.navigate(R.id.nav_menu)
+                    if(menuItemClick != p0.itemId){
+                        EventBus.getDefault().postSticky(MenuInflateEvent(true))
+                        navController.navigate(R.id.nav_menu)}
                 }
                 else if(p0.itemId == R.id.nav_view_order)
                 {
-                    if(menuItemClick != p0.itemId)
-                    navController.navigate(R.id.nav_view_order)
+                    if(menuItemClick != p0.itemId){
+                        EventBus.getDefault().postSticky(MenuInflateEvent(true))
+                        navController.navigate(R.id.nav_view_order)
+                    }
                 }
                 else if(p0.itemId == R.id.nav_update_info)
                 {
@@ -172,7 +180,9 @@ class HomeActivity : AppCompatActivity() {
         })
 
         initPlacesClient()
-       countCartItem()
+//       countCartItem()
+
+        EventBus.getDefault().postSticky(HideFABCart(true))
     }
 
     private fun showNewsDialog() {
@@ -353,8 +363,8 @@ class HomeActivity : AppCompatActivity() {
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     fun onCountCartEvent(event: CountCartEvent){
         if(event.isSuccess){
-
-           countCartItem()
+            if(Common.currentRestaurant != null)
+                countCartItem()
 
         }
     }
@@ -365,7 +375,9 @@ class HomeActivity : AppCompatActivity() {
             dialog!!.show()
 
             FirebaseDatabase.getInstance()
-                .getReference("Category")
+                .getReference(Common.RESTAURANT_REF)
+                .child(Common.currentRestaurant!!.uid)
+                .child(Common.CATEGORY_REF)
                 .child(event.popularCategoryModel!!.menu_id!!)
                 .addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {
@@ -380,7 +392,9 @@ class HomeActivity : AppCompatActivity() {
 
                             //Load food
                             FirebaseDatabase.getInstance()
-                                .getReference("Category")
+                                .getReference(Common.RESTAURANT_REF)
+                                .child(Common.currentRestaurant!!.uid)
+                                .child(Common.CATEGORY_REF)
                                 .child(event.popularCategoryModel!!.menu_id!!)
                                 .child("foods")
                                 .orderByChild("id")
@@ -421,7 +435,9 @@ class HomeActivity : AppCompatActivity() {
             dialog!!.show()
 
             FirebaseDatabase.getInstance()
-                .getReference("Category")
+                .getReference(Common.RESTAURANT_REF)
+                .child(Common.currentRestaurant!!.uid)
+                .child(Common.CATEGORY_REF)
                 .child(event.model!!.menu_id!!)
                 .addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {
@@ -435,7 +451,9 @@ class HomeActivity : AppCompatActivity() {
 
                             //Load food
                             FirebaseDatabase.getInstance()
-                                .getReference("Category")
+                                .getReference(Common.RESTAURANT_REF)
+                                .child(Common.currentRestaurant!!.uid)
+                                .child(Common.CATEGORY_REF)
                                 .child(event.model!!.menu_id!!)
                                 .child("foods")
                                 .orderByChild("id")
@@ -489,8 +507,32 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    @Subscribe(sticky = true,threadMode =  ThreadMode.MAIN)
+    public fun onRestaurantClick(event:MenuItemEvent){
+        val bundle  = Bundle()
+        bundle.putString("restaurant",event.restaurantModel.uid)
+        navController.navigate(R.id.nav_home,bundle)
+
+        EventBus.getDefault().postSticky(MenuInflateEvent(true))
+        EventBus.getDefault().postSticky(HideFABCart(false))
+
+        countCartItem()
+
+    }
+
+    @Subscribe(sticky = true,threadMode =  ThreadMode.MAIN)
+    public fun onInflateMenu(event:MenuInflateEvent){
+        navView!!.menu.clear()
+
+
+        if(event.isShowDetail)
+            navView!!.inflateMenu(R.menu.restaurant_detail_menu)
+        else
+            navView!!.inflateMenu(R.menu.activity_main_drawer)
+    }
+
     private fun countCartItem() {
-        cartDataSource.countItemInCart(com.tofukma.orderapp.Utils.Common.currentUser!!.uid!!)
+        cartDataSource.countItemInCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object :SingleObserver<Int>{

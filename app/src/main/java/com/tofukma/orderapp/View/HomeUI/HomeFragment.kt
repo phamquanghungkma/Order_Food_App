@@ -52,17 +52,20 @@ class HomeFragment : Fragment() {
 
         val root = inflater.inflate(R.layout.fragment_home_2, container, false)
 
+
+        val key = arguments!!.getString("restaurant")
+
 //        unbinder = ButterKnife.bind(this,root)
         initView(root)
         // Bind Data
-        homeViewModel.popularList.observe(this, Observer {
+        homeViewModel.getPopularList(key).observe(this, Observer {
             val listData = it
             val adapter = MyPopularCategoriesAdapter(context!!,listData)
             recyclerView!!.adapter = adapter
             recyclerView!!.layoutAnimation = layoutAnimationController
         })
 
-        homeViewModel.bestDealList.observe(this, Observer {
+        homeViewModel.getBestDealList(key).observe(this, Observer {
 
             val adapter = MyBestDealsAdapter(context!!,it,false)
             viewPager!!.adapter = adapter

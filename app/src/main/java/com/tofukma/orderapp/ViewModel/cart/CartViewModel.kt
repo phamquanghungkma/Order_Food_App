@@ -32,7 +32,7 @@ class CartViewModel : ViewModel() {
         return mutableLiveDataCartItem!!
     }
     private fun getCartItems(){
-        compositeDisposable.addAll(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!)
+        compositeDisposable.addAll(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!,Common.currentRestaurant!!.uid)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ cartItems ->

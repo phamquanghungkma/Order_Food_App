@@ -4,8 +4,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "Cart",primaryKeys = ["uid","foodId","foodSize","foodAddon"])
+@Entity(tableName = "Cart",primaryKeys = ["uid","foodId","foodSize","foodAddon","restaurantId"])
 class CartItem {
+
+    @NonNull
+    @ColumnInfo(name = "restaurantId")
+    var restaurantId:String = ""
+
 
     @ColumnInfo(name = "foodId")
     var foodId:String =""

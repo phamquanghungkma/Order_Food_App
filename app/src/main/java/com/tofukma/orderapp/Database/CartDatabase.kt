@@ -12,7 +12,7 @@ abstract class CartDatabase : RoomDatabase() {
          fun getInstance(context: Context):CartDatabase{
 
              if (instance == null)
-                 instance = Room.databaseBuilder<CartDatabase>(context,CartDatabase::class.java!!,"OrderFood").fallbackToDestructiveMigration().allowMainThreadQueries().build()
+                 instance = Room.databaseBuilder<CartDatabase>(context,CartDatabase::class.java!!,"orderapp-71a6c").fallbackToDestructiveMigration().allowMainThreadQueries().build()
              return instance!!
          }
     }

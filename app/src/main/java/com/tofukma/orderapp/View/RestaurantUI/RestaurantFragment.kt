@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -18,11 +19,15 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
 import com.tofukma.orderapp.Adapter.MyRestaurantAdapter
+import com.tofukma.orderapp.EventBus.CountCartEvent
+import com.tofukma.orderapp.EventBus.HideFABCart
+import com.tofukma.orderapp.EventBus.MenuInflateEvent
 import com.tofukma.orderapp.R
 import com.tofukma.orderapp.Utils.SpacesItemDecoration
 import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import com.tofukma.orderapp.ViewModel.restaurant.RestaurantViewModel
 import dmax.dialog.SpotsDialog
+import org.greenrobot.eventbus.EventBus
 
 class RestaurantFragment : Fragment() {
 
@@ -61,6 +66,11 @@ class RestaurantFragment : Fragment() {
     }
 
     private fun initViews(root: View?) {
+
+        EventBus.getDefault().postSticky(HideFABCart(true))
+
+        setHasOptionsMenu(true)
+
         dialog = SpotsDialog.Builder().setContext(context).setCancelable(false).build()
         dialog.show()
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(context,R.anim.layout_item_from_left)
@@ -73,5 +83,11 @@ class RestaurantFragment : Fragment() {
 
         recycler_restaurant!!.layoutManager = staggeredGridLayoutManager
         recycler_restaurant!!.addItemDecoration(DividerItemDecoration(context!!,layoutManager.orientation))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        EventBus.getDefault().postSticky(MenuInflateEvent(false))
+        EventBus.getDefault().postSticky(CountCartEvent(true))
     }
 }

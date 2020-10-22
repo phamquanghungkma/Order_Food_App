@@ -286,7 +286,7 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                             //Log.d("Test",orderModel.orderNumber)
                             dialog.show()
                         //First clear all item in cart
-                            cartDataSource.cleanCart(Common.currentUser!!.uid!!)
+                            cartDataSource.cleanCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(object:SingleObserver<Int>{

@@ -11,6 +11,7 @@ import com.tofukma.orderapp.CallBack.IBestDealLoadCallBack
 import com.tofukma.orderapp.CallBack.IPopularLoadCallBack
 import com.tofukma.orderapp.Model.BestDealModel
 import com.tofukma.orderapp.Model.PopularCategoryModel
+import com.tofukma.orderapp.Utils.Common
 
 class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
 //    ICategoryCallBackListener
@@ -30,20 +31,21 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
 
 
 
-    val bestDealList:LiveData<List<BestDealModel>>
-        get() {
+    fun getBestDealList(key: String):LiveData<List<BestDealModel>>
+         {
             if(bestDealListMutableLiveData == null){
 
                 bestDealListMutableLiveData = MutableLiveData()
                 messageError = MutableLiveData()
-                loadBestDealList()
+                loadBestDealList(key)
             }
             return bestDealListMutableLiveData!!
         }
 
-    private fun loadBestDealList() {
+    private fun loadBestDealList(key:String) {
         val tempList = ArrayList<BestDealModel>()
-        val bestDealRef = FirebaseDatabase.getInstance().getReference(com.tofukma.orderapp.Utils.Common.BEST_DEALS_REF)
+        val bestDealRef = FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
+            .child(key).child(Common.BEST_DEALS_REF)
         bestDealRef.addListenerForSingleValueEvent(object:ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
                 bestDealCallBackListener.onBestDealLoadFailed((error.message))
@@ -60,13 +62,13 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
 
     }
 
-    val popularList:LiveData<List<PopularCategoryModel>>
-     get(){
+    fun  getPopularList(key:String):LiveData<List<PopularCategoryModel>>
+     {
          if(popularListMutableLiveData == null)
          {
              popularListMutableLiveData =  MutableLiveData()
              messageError = MutableLiveData()
-             loadPopularList()
+             loadPopularList(key)
          }
          return popularListMutableLiveData!!
      }
@@ -86,9 +88,9 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
         messageError.value = message
     }
 
-    private fun loadPopularList(){
+    private fun loadPopularList(key: String){
         val tempList = ArrayList<PopularCategoryModel>()
-        val popularRef = FirebaseDatabase.getInstance().getReference(com.tofukma.orderapp.Utils.Common.POPULAR_REF)
+        val popularRef = FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF).child(key).child(Common.POPULAR_REF)
         popularRef.addListenerForSingleValueEvent(object:ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
                 popularLoadCallBackListener.onPopularLoadFailed((error.message))

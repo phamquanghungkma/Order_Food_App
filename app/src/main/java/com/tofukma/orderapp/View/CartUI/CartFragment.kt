@@ -358,7 +358,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     }
 
     private fun paymentCOD(address: String, comment: String) {
-        compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
+        compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                     cartItemList ->
                 // when we have all cartItem, we will get total price\
@@ -374,7 +374,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
                     Log.d("LOI","do Common.currentUser.uid null");
                 }
-                cartDataSource!!.sumPrice(Common.currentUser!!.uid!!)
+                cartDataSource!!.sumPrice(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object: SingleObserver<Double>{
@@ -432,7 +432,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
                 //clean cart
                 if(task.isSuccessful){
-                    cartDataSource!!.cleanCart(Common.currentUser!!.uid!!).subscribeOn(Schedulers.io())
+                    cartDataSource!!.cleanCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(object: SingleObserver<Int>{
                             override fun onSuccess(t: Int) {
@@ -500,7 +500,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
 
     private fun sumCart() {
-        cartDataSource!!.sumPrice(Common.currentUser!!.uid!!)
+        cartDataSource!!.sumPrice(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Double>{
@@ -564,7 +564,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     }
 
     private fun calculateTotalPrice() {
-        cartDataSource!!.sumPrice(Common.currentUser!!.uid!!)
+        cartDataSource!!.sumPrice(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object:SingleObserver<Double>{
@@ -597,7 +597,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item!!.itemId == R.id.action_clear_cart)
         {
-            cartDataSource!!.cleanCart(Common.currentUser!!.uid!!)
+            cartDataSource!!.cleanCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object:SingleObserver<Int>{
