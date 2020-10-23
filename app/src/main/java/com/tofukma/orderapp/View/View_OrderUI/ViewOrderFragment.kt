@@ -149,7 +149,9 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                                             val update_data = HashMap<String,Any>()
                                             update_data.put("orderStatus",-1) //cancel order
                                             FirebaseDatabase.getInstance()
-                                                .getReference(Common.ORDER_REF)
+                                                .getReference(Common.RESTAURANT_REF)
+                                                .child(Common.currentRestaurant!!.uid!!)
+                                                .child(Common.ORDER_REF)
                                                 .child(orderModel.orderNumber!!)
                                                 .updateChildren(update_data)
                                                 .addOnFailureListener{e ->
@@ -197,7 +199,9 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                                             refundRequestModel.cardName = edt_name.text.toString()
 
                                             FirebaseDatabase.getInstance()
-                                                .getReference(Common.REFUND_REQUEST_REF)
+                                                .getReference(Common.RESTAURANT_REF)
+                                                .child(Common.currentRestaurant!!.uid!!)
+                                                .child(Common.REFUND_REQUEST_REF)
                                                 .child(orderModel.orderNumber!!)
                                                 .setValue(refundRequestModel)
                                                 .addOnFailureListener{e ->
@@ -209,7 +213,9 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                                                     val update_data = HashMap<String,Any>()
                                                     update_data.put("orderStatus",-1) //cancel order
                                                     FirebaseDatabase.getInstance()
-                                                        .getReference(Common.ORDER_REF)
+                                                        .getReference(Common.RESTAURANT_REF)
+                                                        .child(Common.currentRestaurant!!.uid!!)
+                                                        .child(Common.ORDER_REF)
                                                         .child(orderModel.orderNumber!!)
                                                         .updateChildren(update_data)
                                                         .addOnFailureListener{e ->
@@ -250,7 +256,9 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                             val orderModel = (recycler_order.adapter as MyOrderAdapter).getItemAtPosition(pos)
                             //Log.d("Test",orderModel.orderNumber)
                                 FirebaseDatabase.getInstance()
-                                    .getReference(Common.SHIPPING_ORDER_REF)
+                                    .getReference(Common.RESTAURANT_REF)
+                                    .child(Common.currentRestaurant!!.uid!!)
+                                    .child(Common.SHIPPING_ORDER_REF)
                                     .child(orderModel.orderNumber!!)
                                     .addListenerForSingleValueEvent(object:ValueEventListener{
                                         override fun onCancelled(p0: DatabaseError) {
