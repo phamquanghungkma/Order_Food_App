@@ -44,8 +44,10 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
 
     private fun loadBestDealList(key:String) {
         val tempList = ArrayList<BestDealModel>()
-        val bestDealRef = FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
-            .child(key).child(Common.BEST_DEALS_REF)
+        val bestDealRef = FirebaseDatabase.getInstance()
+            .getReference(Common.RESTAURANT_REF)
+            .child(key)
+            .child(Common.BEST_DEALS_REF)
         bestDealRef.addListenerForSingleValueEvent(object:ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
                 bestDealCallBackListener.onBestDealLoadFailed((error.message))
