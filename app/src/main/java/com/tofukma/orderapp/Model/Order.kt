@@ -6,15 +6,15 @@ import com.tofukma.orderapp.Utils.Encryption
 
 class Order {
 
-    var userId: String
+    var userId: String ?= null
     get() {
         if(userId != null){
-            return Decryption.decrypt(userId) as String
+            return Decryption.decrypt(userId!!) as String
         }
         return "";
     }
     set(value) {
-        val dataEncryption = Encryption.encrypt(value) as String
+        val dataEncryption = Encryption.encrypt(value!!) as String
         field =  if(dataEncryption != null )dataEncryption else ""
     }
 
