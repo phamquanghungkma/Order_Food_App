@@ -1,10 +1,23 @@
 package com.tofukma.orderapp.Model
 
 import com.tofukma.orderapp.Database.CartItem
+import com.tofukma.orderapp.Utils.Decryption
+import com.tofukma.orderapp.Utils.Encryption
 
 class Order {
 
-    var userId: String ?= null
+    var userId: String
+    get() {
+        if(userId != null){
+            return Decryption.decrypt(userId) as String
+        }
+        return "";
+    }
+    set(value) {
+        val dataEncryption = Encryption.encrypt(value) as String
+        field =  if(dataEncryption != null )dataEncryption else ""
+    }
+
     var userName:String ?= null
     var userPhone :String ?= null
     var shippingAddress:String ?= null
