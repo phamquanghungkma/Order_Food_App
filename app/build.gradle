@@ -21,8 +21,15 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true //Thu gọn code, false nếu không dùng
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled true
+            useProguard false //Không làm rối code
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
         }
     }
 
