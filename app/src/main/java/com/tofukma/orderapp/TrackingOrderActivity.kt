@@ -164,7 +164,11 @@ class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback, ValueEven
     private fun drawRoutes() {
         val locationOrder = LatLng(Common.currentShippingOrder!!.orderModel!!.lat,
             Common.currentShippingOrder!!.orderModel!!.lng)
-        val locationShipper = LatLng(Common.currentShippingOrder!!.currentLat,Common.currentShippingOrder!!.currentLng)
+        val locationShipper = Common.currentShippingOrder!!.currentLat?.let { Common.currentShippingOrder!!.currentLng?.let { it1 ->
+            LatLng(it,
+                it1
+            )
+        } }
         //addbox
         mMap.addMarker(MarkerOptions()
             .icon(BitmapDescriptorFactory.fromResource(R.drawable.box))
@@ -179,15 +183,17 @@ class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback, ValueEven
             as BitmapDrawable
             val resizer = Bitmap.createScaledBitmap(bitmapDrawable.bitmap,width,height,false)
 
-            shipperMarket = mMap.addMarker(MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(resizer))
-                .title(StringBuilder("Shipper: ").append(Common.currentShippingOrder!!.shipperName).toString())
-                .snippet(StringBuilder("Phone: ").append(Common.currentShippingOrder!!.shipperPhone)
-                    .append("\n")
-                    .append("Estimate Delivery Time: ")
-                    .append(Common.currentShippingOrder!!.estimateTime).toString()
-                )
-                .position(locationShipper))
+            shipperMarket = mMap.addMarker(locationShipper?.let {
+                MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(resizer))
+                    .title(StringBuilder("Shipper: ").append(Common.currentShippingOrder!!.shipperName).toString())
+                    .snippet(StringBuilder("Phone: ").append(Common.currentShippingOrder!!.shipperPhone)
+                        .append("\n")
+                        .append("Estimate Delivery Time: ")
+                        .append(Common.currentShippingOrder!!.estimateTime).toString()
+                    )
+                    .position(it)
+            })
 
             shipperMarket!!.showInfoWindow() //alway show window
 

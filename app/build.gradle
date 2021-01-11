@@ -112,9 +112,5 @@ dependencies {
 
     implementation 'com.androidwidgets:formatedittext:0.2.0'
 
-
-
-
-
-
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.56'
 }
