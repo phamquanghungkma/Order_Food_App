@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.TextView
@@ -35,6 +36,7 @@ import com.tofukma.orderapp.Model.UserModel
 import dmax.dialog.SpotsDialog
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -137,6 +139,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
+                        Log.d("test", snapshot.toString())
                         val userModel = snapshot.getValue(UserModel::class.java)
                         gotoHomeActivity(userModel)
                     } else {

@@ -30,7 +30,9 @@
 -renamesourcefileattribute SourceFile
 -keepattributes Annotation
 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
-
+-keepclassmembers class com.tofukma.orderapp.Model.** {
+  *;
+}
 -keep class * extends android.app.Activity
 -assumenosideeffects class android.util.Log {
     public static * d(...);
