@@ -46,7 +46,7 @@ class MyRestaurantAdapter (internal var context: Context,
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyRestaurantAdapter.MyViewHolder {
         return  MyViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_restaurant,parent, false))
     }
 
@@ -54,7 +54,7 @@ class MyRestaurantAdapter (internal var context: Context,
         return restaurantList.size
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyRestaurantAdapter.MyViewHolder, position: Int) {
         Glide.with(context).load(restaurantList[position].imageUrl)
             .into(holder.img_restaurant!!)
         holder.text_restaurant_name!!.setText(restaurantList[position].name)

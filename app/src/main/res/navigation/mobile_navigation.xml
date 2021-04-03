@@ -30,7 +30,7 @@
         
     </fragment>
 
-    <fragment
+     <fragment
         android:id="@+id/nav_menu"
         android:name="com.tofukma.orderapp.View.CategoryUI.MenuFragment"
         android:label="@string/menu_category"

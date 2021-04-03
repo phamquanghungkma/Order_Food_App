@@ -453,10 +453,12 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                     .subscribe({t:FCMResponse? ->
                                         if(t!!.success != 0)
                                             Toast.makeText(context!!,"Đặt hàng thành công ",Toast.LENGTH_LONG).show()
+                                            Log.d("dathang","Success")
                                     },{
                                             throwable: Throwable ->
                                         throwable.printStackTrace()
                                         Toast.makeText(context!!,"Thoong bao loi ",Toast.LENGTH_LONG).show()
+                                        Log.d("dathang","Failed")
 
                                     }))
 
@@ -518,7 +520,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
                 override fun onError(e: Throwable) {
                     if(!e.message!!.contains("Query returned emtpy"))
-                        Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
+                    Log.d("[SUM CART]",e.message)
                 }
 
             })
@@ -582,7 +584,9 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
                 override fun onError(e: Throwable) {
                     if(!e.message!!.contains("Query returned emtpy"))
-                        Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
+                        Log.d("[SUM CART]",e.message)
+
                 }
             })
     }

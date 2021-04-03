@@ -47,6 +47,7 @@ import com.tofukma.orderapp.EventBus.*
 import com.tofukma.orderapp.Model.CategoryModel
 import com.tofukma.orderapp.Model.FoodModel
 import com.tofukma.orderapp.Model.UserModel
+import com.tofukma.orderapp.View.HomeUI.HomeFragment
 import dmax.dialog.SpotsDialog
 import io.paperdb.Paper
 import io.reactivex.SingleObserver
@@ -139,11 +140,8 @@ class HomeActivity : AppCompatActivity() {
                 }
                 else if(p0.itemId == R.id.nav_home)
                 {
-                    if(menuItemClick != p0.itemId)
-                    {
-                        EventBus.getDefault().postSticky(MenuInflateEvent(true))
-                        navController.navigate(R.id.nav_home)
-                    }
+                    toHome()
+
                 }
                 else if(p0.itemId == R.id.nav_cart)
                 {
@@ -183,6 +181,13 @@ class HomeActivity : AppCompatActivity() {
 //       countCartItem()
 
         EventBus.getDefault().postSticky(HideFABCart(true))
+    }
+    fun toHome()
+    {
+
+        onBackPressed()
+
+
     }
 
     private fun showNewsDialog() {
@@ -546,7 +551,8 @@ class HomeActivity : AppCompatActivity() {
 
                 override fun onError(e: Throwable) {
                     if(!e.message!!.contains("Query returned emtpy"))
-                        Toast.makeText(this@HomeActivity,"[COUNT CART]"+e.message,Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this@HomeActivity,"[COUNT CART]"+e.message,Toast.LENGTH_SHORT).show()
+                            Log.d("[COUNT CART]",e.message)
                     else
                         fab.count = 0
                 }

@@ -10,13 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.*
 import com.tofukma.orderapp.Adapter.MyCategoriesAdapter
 import com.tofukma.orderapp.Adapter.MyRestaurantAdapter
 import com.tofukma.orderapp.EventBus.CountCartEvent
@@ -77,11 +75,14 @@ class RestaurantFragment : Fragment() {
 
         recycler_restaurant = root!!.findViewById(R.id.recycler_restaurant) as RecyclerView
         recycler_restaurant!!.setHasFixedSize(true)
-        val staggeredGridLayoutManager = StaggeredGridLayoutManager(1,RecyclerView.VERTICAL)
-        val layoutManager = GridLayoutManager(context,1)
+//        val staggeredGridLayoutManager = StaggeredGridLayoutManager(1,RecyclerView.VERTICAL)
+//        val layoutManager = GridLayoutManager(context,1)
+        val layoutManager = LinearLayoutManager(context)
+
         layoutManager.orientation = RecyclerView.VERTICAL
 
-        recycler_restaurant!!.layoutManager = staggeredGridLayoutManager
+//        recycler_restaurant!!.layoutManager = staggeredGridLayoutManager
+        recycler_restaurant!!.layoutManager = layoutManager
         recycler_restaurant!!.addItemDecoration(DividerItemDecoration(context!!,layoutManager.orientation))
     }
 
