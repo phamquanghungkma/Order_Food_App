@@ -45,20 +45,24 @@ object Common {
     var currentShippingOrder: ShippingOrderModel?=null
     val SHIPPING_ORDER_REF: String="ShippingOrder"
     val REFUND_REQUEST_REF: String="RefundRequest"
-    const val TOKEN_REF =  "TOKENS"
-    const val NOTI_TITLE = "title"
-    const val NOTI_CONTENT = "content"
     const val ORDER_REF: String = "Order"
     const val COMMENT_REF: String = "Comments"
-    var foodSelected: FoodModel? = null
-    var categorySelected: CategoryModel? = null
-    const val CATEGORY_REF: String = "Category"
-    const val CATEGORY_BEST_REF : String = "CategoryBest"
-    val FULL_WIDTH_COLUMN: Int = 1
-    val DEFAULT_COLUMN_COUNT: Int = 0
     const val BEST_DEALS_REF: String = "BestDeals"
     const val POPULAR_REF: String = "MostPopular"
     const val USER_REFERENCE = "Users"
+    const val CATEGORY_REF: String = "Category"
+
+    const val TOKEN_REF =  "TOKENS"
+    const val NOTI_TITLE = "title"
+    const val NOTI_CONTENT = "content"
+
+    var foodSelected: FoodModel? = null
+    var categorySelected: CategoryModel? = null
+
+    const val CATEGORY_BEST_REF : String = "CategoryBest"
+    val FULL_WIDTH_COLUMN: Int = 1
+    val DEFAULT_COLUMN_COUNT: Int = 0
+
     var currentUser: UserModel? = null
     var currentToken: String = ""
 

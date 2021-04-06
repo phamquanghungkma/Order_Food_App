@@ -275,6 +275,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
             rdi_home.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
                     edt_address.setText(Common.currentUser!!.addrss!!)
+                    Log.d("homeVitri", Common.currentUser!!.addrss.toString())
+                    Log.d("homeVitri", Common.currentUser!!.lat.toString())
                 }
 
             }
