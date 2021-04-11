@@ -202,7 +202,6 @@ class MyFoodListAdapter (internal var context: Context,
                        }
                }
                    override fun onSubscribe(d: Disposable) {
-3
                    }
 
                })
