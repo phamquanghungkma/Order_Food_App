@@ -119,6 +119,10 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
     lateinit var ifcmService: IFCMService
 
+    private  var orderLat:String ?= null
+    private var orderLng: String ?= null
+
+
     override fun onResume(){
         super.onResume()
         calculateTotalPrice()
@@ -271,12 +275,14 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
             // Data
             edt_address.setText(Common.currentUser!!.addrss!!)
-
             rdi_home.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
                     edt_address.setText(Common.currentUser!!.addrss!!)
-                    Log.d("homeVitri", Common.currentUser!!.addrss.toString())
-                    Log.d("homeVitri", Common.currentUser!!.lat.toString())
+                    currentLocation.latitude = Common.currentUser!!.lat
+                    currentLocation.longitude = Common.currentUser!!.lng
+                    Log.d("homeVitri",currentLocation.longitude.toString())
+                    Log.d("homeVitri",currentLocation.latitude.toString())
+
                 }
 
             }
@@ -306,6 +312,11 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                 override fun onSuccess(t: String) {
 
                                     edt_address.setText(t)
+                                    currentLocation.longitude = task.result!!.longitude
+                                    currentLocation.latitude = task.result!!.latitude
+                                    Log.d("homeVitri",currentLocation.longitude.toString())
+                                    Log.d("homeVitri",currentLocation.latitude.toString())
+
                                 }
 
                                 override fun onError(e: Throwable) {
@@ -325,7 +336,9 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
             builder.setNegativeButton("NO",{dialog, _ ->dialog.dismiss()})
                 .setPositiveButton("YES",{
                         dialog, _ -> if(rdi_cod.isChecked)
-                    paymentCOD(txt_address.text.toString(),edt_comment.text.toString())
+                    paymentCOD(edt_address.text.toString(),edt_comment.text.toString())
+                   Log.d("txt_adrress",txt_address.text.toString())
+                    Log.d("edt_adress",edt_address.text.toString())
                 })
 
 //            var fragmentAddress = AutocompleteSupportFragment.newInstance()
@@ -389,9 +402,13 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                             order.shippingAddress = address
                             order.comment = comment
                             if(currentLocation != null) {
+                                Log.d("currentLocation", currentLocation.latitude.toString())
+                                Log.d("currentLocation", currentLocation.longitude.toString())
+
                                 order.lat = currentLocation!!.latitude
                                 order.lng = currentLocation!!.longitude
                             }
+
                             order.carItemList = cartItemList
                             order.totalPayment = totalPrice
                             order.finalPayment = finalPrice

@@ -3,7 +3,6 @@ package com.tofukma.orderapp.Model
 import com.tofukma.orderapp.Database.CartItem
 
 class Order {
-
     var userId: String ?= null
     var userName:String ?= null
     var userPhone :String ?= null
