@@ -14,6 +14,7 @@ import com.tofukma.orderapp.Database.CartItem
 import com.tofukma.orderapp.Model.AddonModel
 import com.tofukma.orderapp.Model.SizeModel
 import com.tofukma.orderapp.R
+import org.w3c.dom.Text
 import java.lang.StringBuilder
 
 class MyOrderDetailAdapter (internal var context: Context,
@@ -30,6 +31,7 @@ class MyOrderDetailAdapter (internal var context: Context,
         var txt_food_addon: TextView?=null
         var txt_food_quantity: TextView?=null
         var img_food_image: ImageView?=null
+        var txt_food_price: TextView?= null
 
         init{
             img_food_image = itemView.findViewById(R.id.img_food_image) as ImageView

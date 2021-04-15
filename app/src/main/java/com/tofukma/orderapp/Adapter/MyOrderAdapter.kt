@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,6 +42,39 @@ class MyOrderAdapter(private val context:Context,private val orderList:MutableLi
             .inflate(R.layout.layout_order_item,parent,false))
     }
 
+    inner class MyViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
+        internal var img_order : ImageView ?= null
+        internal var txt_order_date:TextView ?= null
+        internal  var txt_order_status:TextView ?= null
+        internal var txt_order_number: TextView ?= null
+        internal  var txt_order_comment: TextView ?= null
+        internal var txt_order_price: TextView ?= null
+
+        internal  var iRecyclerItemClickListener: IRecyclerItemClickListener? = null
+
+        fun setListener(iRecyclerItemClickListener: IRecyclerItemClickListener)
+        {
+            this.iRecyclerItemClickListener = iRecyclerItemClickListener
+        }
+
+        init {
+            img_order = itemView.findViewById(R.id.img_order) as ImageView
+            txt_order_comment = itemView.findViewById(R.id.txt_order_comment) as TextView
+            txt_order_date = itemView.findViewById(R.id.txt_order_date) as TextView
+            txt_order_number = itemView.findViewById(R.id.txt_order_number) as TextView
+            txt_order_status = itemView.findViewById(R.id.txt_order_status) as TextView
+            txt_order_price = itemView.findViewById(R.id.txt_order_price) as TextView
+            itemView.setOnClickListener(this)
+
+        }
+
+        override fun onClick(v: View?) {
+            iRecyclerItemClickListener!!.onItemClick(v!!,adapterPosition)
+        }
+
+    }
+
     override fun getItemCount(): Int {
         return orderList.size
     }
@@ -67,6 +101,7 @@ class MyOrderAdapter(private val context:Context,private val orderList:MutableLi
         holder.txt_order_number!!.text = StringBuilder("Mã đơn: ").append(orderList[position].orderNumber)
         holder.txt_order_comment!!.text = StringBuilder("Bình luận: ").append(orderList[position].comment)
         holder.txt_order_status!!.text = StringBuilder("Trạng thái: ").append(Common.convertStatusToText(orderList[position].orderStatus))
+        holder.txt_order_price!!.text =  StringBuilder("Giá: ").append(Common.formatPrice(orderList[position].totalPayment))
 
         holder.setListener(object :IRecyclerItemClickListener{
             override fun onItemClick(view: View, pos: Int) {
@@ -105,36 +140,6 @@ class MyOrderAdapter(private val context:Context,private val orderList:MutableLi
 
 
 
-    inner class MyViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener {
-        internal var img_order : ImageView ?= null
-        internal var txt_order_date:TextView ?= null
-        internal  var txt_order_status:TextView ?= null
-        internal var txt_order_number: TextView ?= null
-        internal  var txt_order_comment: TextView ?= null
 
-        internal  var iRecyclerItemClickListener: IRecyclerItemClickListener? = null
-
-        fun setListener(iRecyclerItemClickListener: IRecyclerItemClickListener)
-        {
-            this.iRecyclerItemClickListener = iRecyclerItemClickListener
-        }
-
-        init {
-            img_order = itemView.findViewById(R.id.img_order) as ImageView
-            txt_order_comment = itemView.findViewById(R.id.txt_order_comment) as TextView
-            txt_order_date = itemView.findViewById(R.id.txt_order_date) as TextView
-            txt_order_number = itemView.findViewById(R.id.txt_order_number) as TextView
-            txt_order_status = itemView.findViewById(R.id.txt_order_status) as TextView
-
-            itemView.setOnClickListener(this)
-
-        }
-
-        override fun onClick(v: View?) {
-            iRecyclerItemClickListener!!.onItemClick(v!!,adapterPosition)
-        }
-
-    }
 
 }
