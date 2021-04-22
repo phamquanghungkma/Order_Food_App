@@ -1,12 +1,15 @@
 package com.tofukma.orderapp.View.CartUI
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.os.Parcelable
+import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
@@ -21,6 +24,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.asksira.loopingviewpager.LoopingViewPager
+import com.braintreepayments.api.dropin.DropInRequest
+import com.braintreepayments.api.dropin.DropInResult
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
@@ -39,6 +44,7 @@ import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Utils.MySwipeHelper
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
+import com.tofukma.orderapp.Database.CartItem
 import com.tofukma.orderapp.Database.LocalCartDataSource
 import com.tofukma.orderapp.EventBus.CountCartEvent
 import com.tofukma.orderapp.EventBus.HideFABCart
@@ -48,7 +54,9 @@ import com.tofukma.orderapp.Model.FCMResponse
 import com.tofukma.orderapp.Model.FCMSendData
 import com.tofukma.orderapp.Model.Order
 import com.tofukma.orderapp.R
+import com.tofukma.orderapp.Remote.ICloudFunction
 import com.tofukma.orderapp.Remote.IFCMService
+import com.tofukma.orderapp.Remote.RetrofitCloudClient
 import com.tofukma.orderapp.Remote.RetrofitFCMClient
 import com.tofukma.orderapp.ViewModel.cart.CartViewModel
 import io.reactivex.Single
@@ -71,6 +79,7 @@ import kotlin.collections.HashMap
 
 class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
+    private val REQUEST_BRAINTREE_CODE: Int = 8888
     private var placeSelected: Place?=null
     private  var places_fragment: AutocompleteSupportFragment ?= null
     private lateinit var placeClient: PlacesClient
@@ -121,6 +130,11 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
     private  var orderLat:String ?= null
     private var orderLng: String ?= null
+
+    internal var address: String = ""
+    internal var comment: String  = ""
+
+    lateinit var cloudFunctions: ICloudFunction
 
 
     override fun onResume(){
@@ -198,6 +212,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
         setHasOptionsMenu(true) // Import , if not add it , menu will never be inflate
 
         ifcmService = RetrofitFCMClient.getInstance().create(IFCMService::class.java)
+        cloudFunctions = RetrofitCloudClient.getInstance().create(ICloudFunction::class.java)
 
         cartDataSource = LocalCartDataSource(CartDatabase.getInstance(context!!).cartDAO())
         listener = this
@@ -335,10 +350,19 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
             builder.setView(view)
             builder.setNegativeButton("NO",{dialog, _ ->dialog.dismiss()})
                 .setPositiveButton("YES",{
-                        dialog, _ -> if(rdi_cod.isChecked)
-                    paymentCOD(edt_address.text.toString(),edt_comment.text.toString())
-                   Log.d("txt_adrress",txt_address.text.toString())
-                    Log.d("edt_adress",edt_address.text.toString())
+                        dialog, _ ->
+                    if(rdi_cod.isChecked)
+                        paymentCOD(edt_address.text.toString(),edt_comment.text.toString())
+                    else if(rdi_braintree.isChecked)
+                    {
+                        address = edt_address.text.toString()
+                        comment = edt_comment.text.toString()
+                        if(!TextUtils.isEmpty(Common.currentToken))
+                        {
+                            val dropInRequest = DropInRequest().clientToken(Common.currentToken)
+                            startActivityForResult(dropInRequest.getIntent(context),REQUEST_BRAINTREE_CODE)
+                        }
+                    }
                 })
 
 //            var fragmentAddress = AutocompleteSupportFragment.newInstance()
@@ -690,4 +714,83 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 //        super.onPause()
 //
 //    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REQUEST_BRAINTREE_CODE)
+        {
+            if(resultCode == Activity.RESULT_OK)
+            {
+                val result = data!!.getParcelableExtra<DropInResult>(DropInResult.EXTRA_DROP_IN_RESULT)
+                val nonce = result!!.paymentMethodNonce
+
+
+                // tinh toan tong cart
+                cartDataSource!!.sumPrice(Common.currentUser!!.uid!!,Common.currentRestaurant!!.uid)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object: SingleObserver<Double>{
+                        override fun onSuccess(totalPrice: Double) {
+                            compositeDisposable.add(
+                                cartDataSource!!.getAllCart(Common.currentUser!!.uid!!,Common.currentRestaurant!!.uid)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    cartItems: List<CartItem>? ->
+
+                                    // sau khi co toan bo cart item, ta se submit payment
+                                    compositeDisposable.add(cloudFunctions.submitPayment(totalPrice,nonce!!.nonce)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe({ braintreeTransaction ->
+                                            if(braintreeTransaction.success){
+                                                // craete order
+                                                val finalPrice = totalPrice
+                                                val order = Order()
+                                                order.userId = Common.currentUser!!.uid!!
+                                                order.userName = Common.currentUser!!.name!!
+                                                order.userPhone = Common.currentUser!!.phone
+                                                order.shippingAddress = address
+                                                order.comment = comment
+                                                if(currentLocation != null) {
+                                                    Log.d("currentLocation", currentLocation.latitude.toString())
+                                                    Log.d("currentLocation", currentLocation.longitude.toString())
+
+                                                    order.lat = currentLocation!!.latitude
+                                                    order.lng = currentLocation!!.longitude
+                                                }
+
+                                                order.carItemList = cartItems
+                                                order.totalPayment = totalPrice
+                                                order.finalPayment = finalPrice
+                                                order.discount = 0
+                                                order.isCod = false
+                                                order.transactionId =  braintreeTransaction.transaction!!.id
+
+                                                syncLocalTimeWithServerTime(order)
+                                            }
+                                        },{
+                                            t:Throwable? ->
+                                            Toast.makeText(context,"" +t!!.message,Toast.LENGTH_SHORT).show()
+                                        })
+                                    )
+                                })
+                            )
+
+
+                        }
+
+                        override fun onSubscribe(d: Disposable) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onError(e: Throwable) {
+                            TODO("Not yet implemented")
+                        }
+
+                    } )
+
+            }
+        }
+    }
 }

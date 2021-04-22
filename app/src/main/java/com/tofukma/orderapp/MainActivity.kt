@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.firebase.ui.auth.data.model.User
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -33,8 +34,14 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import com.tofukma.orderapp.Utils.Common
 import com.tofukma.orderapp.Model.UserModel
+import com.tofukma.orderapp.Remote.ICloudFunction
+import com.tofukma.orderapp.Remote.RetrofitCloudClient
 import dmax.dialog.SpotsDialog
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import retrofit2.Retrofit
 import java.util.*
 import kotlin.math.log
 
@@ -53,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var listener: FirebaseAuth.AuthStateListener
     private lateinit var dialog: android.app.AlertDialog
     private val compositeDisposable = CompositeDisposable()
+    private lateinit var cloudFunctions: ICloudFunction
 
 
     private lateinit var userRef: DatabaseReference
@@ -91,8 +99,9 @@ class MainActivity : AppCompatActivity() {
         placeClient = Places.createClient(this)
 
         providers = Arrays.asList<AuthUI.IdpConfig>(AuthUI.IdpConfig.PhoneBuilder().build(),
-        AuthUI.IdpConfig.EmailBuilder().build()
-            )
+        AuthUI.IdpConfig.EmailBuilder().build())
+        cloudFunctions = RetrofitCloudClient.getInstance().create(ICloudFunction::class.java)
+
 
         userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCE)
         firebaseAuth = FirebaseAuth.getInstance()
@@ -128,7 +137,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
+// when user login Token wwill be generated
     private fun checkUserFromFirebase(user: FirebaseUser) {
         dialog!!.show()
         userRef!!.child(user!!.uid)
@@ -136,16 +145,31 @@ class MainActivity : AppCompatActivity() {
                 override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(this@MainActivity, "" + error.message, Toast.LENGTH_LONG).show()
                 }
-
+//              add phan thanh toan bang online
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        Log.d("test", snapshot.toString())
-                        val userModel = snapshot.getValue(UserModel::class.java)
-                        gotoHomeActivity(userModel)
+//                        Log.d("test", snapshot.toString())
+//                        val userModel = snapshot.getValue(UserModel::class.java)
+//                        gotoHomeActivity(userModel)
+                        compositeDisposable.add(cloudFunctions!!.getToken()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({ braintreeToken ->
+                                dialog!!.dismiss()
+                                val userModel = snapshot.getValue(UserModel::class.java)
+                                gotoHomeActivity(userModel,braintreeToken.token)
+
+                            },{ throwable ->
+                                dialog!!.dismiss()
+                                Toast.makeText(this@MainActivity!!,""+ throwable.message,Toast.LENGTH_LONG).show()
+                            })
+
+                        )
                     } else {
+                        dialog.dismiss()
                         showRegisterDialog(user)
                     }
-                    dialog!!.dismiss()
+//                    dialog!!.dismiss()
                 }
 
 
@@ -214,14 +238,37 @@ class MainActivity : AppCompatActivity() {
                 userRef!!.child(user!!.uid)
                     .setValue(userModel).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            dialogInterface.dismiss()
+//                            dialogInterface.dismiss()
+//                            Toast.makeText(
+//                                this@MainActivity,
+//                                "Congratulation! Register Success!",
+//                                Toast.LENGTH_LONG
+//                            ).show()
+//
+//                            gotoHomeActivity(userModel)
+                            compositeDisposable.add(cloudFunctions.getToken()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ braintreeToken ->
+                                    dialogInterface.dismiss()
                             Toast.makeText(
                                 this@MainActivity,
                                 "Congratulation! Register Success!",
                                 Toast.LENGTH_LONG
                             ).show()
 
-                            gotoHomeActivity(userModel)
+                            gotoHomeActivity(userModel,braintreeToken.token)
+                                },{
+                                    t: Throwable? ->
+                                    dialogInterface.dismiss()
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        ""+ t!!.message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                })
+                            )
                         }
                     }
             } else {
@@ -239,12 +286,12 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
 }
 
-    private fun gotoHomeActivity(userModel: UserModel?) {
+    private fun gotoHomeActivity(userModel: UserModel?, token: String?) {
 
         FirebaseInstanceId.getInstance().instanceId.addOnFailureListener { e -> Toast.makeText(this@MainActivity,""+e.message,Toast.LENGTH_SHORT).show()
 
             Common.currentUser = userModel!!
-//            Common.currentToken = token!!
+            Common.currentToken = token!!
 
             startActivity(Intent(this@MainActivity,HomeActivity::class.java))
             finish()
