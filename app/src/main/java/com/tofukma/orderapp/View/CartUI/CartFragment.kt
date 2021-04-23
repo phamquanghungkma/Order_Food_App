@@ -355,12 +355,17 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                         paymentCOD(edt_address.text.toString(),edt_comment.text.toString())
                     else if(rdi_braintree.isChecked)
                     {
+                        Toast.makeText(context,"pressd_OnlPay",Toast.LENGTH_LONG).show()
                         address = edt_address.text.toString()
                         comment = edt_comment.text.toString()
+
                         if(!TextUtils.isEmpty(Common.currentToken))
                         {
+                            Toast.makeText(context,"pressd_OnlPay_if_statement",Toast.LENGTH_LONG).show()
                             val dropInRequest = DropInRequest().clientToken(Common.currentToken)
                             startActivityForResult(dropInRequest.getIntent(context),REQUEST_BRAINTREE_CODE)
+                        } else {
+                            Toast.makeText(context,"null",Toast.LENGTH_LONG).show()
                         }
                     }
                 })
@@ -723,8 +728,6 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
             {
                 val result = data!!.getParcelableExtra<DropInResult>(DropInResult.EXTRA_DROP_IN_RESULT)
                 val nonce = result!!.paymentMethodNonce
-
-
                 // tinh toan tong cart
                 cartDataSource!!.sumPrice(Common.currentUser!!.uid!!,Common.currentRestaurant!!.uid)
                     .subscribeOn(Schedulers.io())
@@ -781,11 +784,10 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                         }
 
                         override fun onSubscribe(d: Disposable) {
-                            TODO("Not yet implemented")
                         }
 
                         override fun onError(e: Throwable) {
-                            TODO("Not yet implemented")
+                            Toast.makeText(context,""+e.message,Toast.LENGTH_LONG).show()
                         }
 
                     } )

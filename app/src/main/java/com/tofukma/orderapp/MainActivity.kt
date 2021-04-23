@@ -256,7 +256,7 @@ class MainActivity : AppCompatActivity() {
                                 "Congratulation! Register Success!",
                                 Toast.LENGTH_LONG
                             ).show()
-
+                             Log.d("braintreeToken",braintreeToken.token)
                             gotoHomeActivity(userModel,braintreeToken.token)
                                 },{
                                     t: Throwable? ->
@@ -300,7 +300,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 Common.currentUser = userModel!!
-//                Common.currentToken = token!!
+                Common.currentToken = token!!
                 Common.updateToken(this@MainActivity,task.result!!.token)
 
                 startActivity(Intent(this@MainActivity,HomeActivity::class.java))
