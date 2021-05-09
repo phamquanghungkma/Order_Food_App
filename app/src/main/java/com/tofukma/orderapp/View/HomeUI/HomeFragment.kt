@@ -2,6 +2,7 @@ package com.tofukma.orderapp.View.HomeUI
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.asksira.loopingviewpager.LoopingViewPager
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.tofukma.orderapp.Adapter.MyBestDealsAdapter
 import com.tofukma.orderapp.Adapter.MyCategoriesBestAdatper
 
@@ -27,6 +32,8 @@ import com.tofukma.orderapp.ViewModel.home.HomeViewModel
 import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
 import org.greenrobot.eventbus.EventBus
+import java.time.LocalDate
+import kotlin.reflect.typeOf
 
 class HomeFragment : Fragment() {
 
@@ -57,6 +64,7 @@ class HomeFragment : Fragment() {
 
 //        unbinder = ButterKnife.bind(this,root)
         initView(root)
+
         // Bind Data
         homeViewModel.getPopularList(key).observe(this, Observer {
             val listData = it
@@ -66,11 +74,28 @@ class HomeFragment : Fragment() {
         })
 
         homeViewModel.getBestDealList(key).observe(this, Observer {
-
             val adapter = MyBestDealsAdapter(context!!,it,false)
             viewPager!!.adapter = adapter
+            viewPager!!.layoutAnimation = layoutAnimationController
 
         })
+//        homeViewModel.getRecommenndList().observe(this, Observer {
+//            Log.d("Call123","Recommend List")
+//        })
+        homeViewModel.loadRecommendList()
+        homeViewModel.listRecomnend.observe(this, Observer {
+            //data lay dc o day roi nha
+           //xong roi
+           //
+            if(it.isNullOrEmpty()){
+                Log.d("HomeFr","data null")
+            } else {
+                Log.d("HomeFr",it.toString())
+            }
+
+
+        })
+
         // Binding data hay là lắng nghe sự thay đổi dữ liệu rồi truyển vào view
         menuViewModel.getCategoryBestList().observe(this, Observer {
             dialog.dismiss()
@@ -82,7 +107,27 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    private fun loadRecommendation(){
+        FirebaseDatabase.getInstance().getReference(Common.RECOMMENDATION_REF)
+            .child(Common.currentRestaurant!!.uid)
+            .child(Common.RECOMMENDATION_REF)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.d("Loi",p0.toString())
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    for(item in p0!!.children){
+                        Log.d("Data",item.toString())
+                    }
+
+                }
+
+            })
+    }
+
     private fun initView(root:View) {
+
         dialog = SpotsDialog.Builder().setContext(context).setCancelable(false).build()
         dialog.show()
         recycler_menu = root.findViewById(R.id.recycler_menu2) as RecyclerView
@@ -117,6 +162,8 @@ class HomeFragment : Fragment() {
         recyclerView = root.findViewById(R.id.recycler_popular) as RecyclerView
         recyclerView!!.setHasFixedSize(true)
         recyclerView!!.layoutManager = LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
+        loadRecommendation()
+
 
     }
 

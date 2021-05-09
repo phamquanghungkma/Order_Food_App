@@ -12,6 +12,7 @@ import com.tofukma.orderapp.CallBack.IBestDealLoadCallBack
 import com.tofukma.orderapp.CallBack.IPopularLoadCallBack
 import com.tofukma.orderapp.Model.BestDealModel
 import com.tofukma.orderapp.Model.PopularCategoryModel
+import com.tofukma.orderapp.Model.RecommendModel
 import com.tofukma.orderapp.Utils.Common
 
 class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
@@ -22,14 +23,52 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
 
     private  var popularListMutableLiveData: MutableLiveData<List<PopularCategoryModel>> ?= null
     private  var bestDealListMutableLiveData: MutableLiveData<List<BestDealModel>> ?= null
+    private var recommendListMutableLiveData= MutableLiveData<List<RecommendModel>>()
 
-    private  lateinit var messageError:MutableLiveData<String>
+    private lateinit var messageError:MutableLiveData<String>
     private  var popularLoadCallBackListener: IPopularLoadCallBack
     private var bestDealCallBackListener: IBestDealLoadCallBack
 //    private  val categoryCallBackListener: ICategoryCallBackListener
 
 
+    val dataTest=MutableLiveData<List<RecommendModel>>()
 
+    fun getRecommenndList(key:String)//
+    {
+        if(recommendListMutableLiveData == null){
+            loadRecommendList()
+            Log.d("Test","ok")
+        }
+       /// return recommendListMutableLiveData!!
+    }
+
+    val listTest= mutableListOf<RecommendModel>()
+    var listRecomnend=MutableLiveData<MutableList<RecommendModel>>()
+     fun loadRecommendList() {
+        Log.d("current uid",Common.currentUser!!.uid.toString())
+        FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
+            .child(Common.currentRestaurant!!.uid)
+            .child(Common.RECOMMENDATION_REF)
+            .child(Common.currentUser!!.uid!!)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.d("Loi",p0.toString())
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    Log.d("hung",Common.currentUser!!.uid!!)
+                    for (pos in p0.children){
+                        val model=pos.getValue(RecommendModel::class.java)
+                        Log.d("hung1",model!!.food_id.toString())
+                        listTest.add(model!!)
+
+                    }
+                    listRecomnend.value=listTest
+                    Log.d("phuc","$listTest")
+                }
+
+            })
+    }
 
 
     fun getBestDealList(key: String):LiveData<List<BestDealModel>>
@@ -63,6 +102,7 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
         })
 
     }
+
 
     fun  getPopularList(key:String):LiveData<List<PopularCategoryModel>>
      {

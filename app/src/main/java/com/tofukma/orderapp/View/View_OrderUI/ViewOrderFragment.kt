@@ -73,6 +73,7 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
 
         loadOrderFromServer()
 
+
         viewOrderModel!!.mutableLiveDataOrderList.observe(this, Observer {
 
             Collections.reverse(it!!)
@@ -83,6 +84,8 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
 
         return root
     }
+
+
 
     private fun loadOrderFromServer() {
         dialog.show()
