@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
+import android.widget.TextView
+import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -31,7 +33,9 @@ import com.tofukma.orderapp.R
 import com.tofukma.orderapp.ViewModel.home.HomeViewModel
 import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
+import kotlinx.android.synthetic.main.fragment_home_2.*
 import org.greenrobot.eventbus.EventBus
+import org.w3c.dom.Text
 import java.time.LocalDate
 import kotlin.reflect.typeOf
 
@@ -41,11 +45,13 @@ class HomeFragment : Fragment() {
     private lateinit var dialog: AlertDialog
     private var recycler_menu: RecyclerView?= null
 
+
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
 
     var recyclerView:RecyclerView ?= null
     var viewPager:LoopingViewPager ?= null
+    var recommendTextView: TextView ?= null
 
     var layoutAnimationController:LayoutAnimationController ?= null
 
@@ -89,6 +95,9 @@ class HomeFragment : Fragment() {
            //
             if(it.isNullOrEmpty()){
                 Log.d("HomeFr","data null")
+                recommendTextView!!.visibility = View.INVISIBLE
+
+
             } else {
                 Log.d("HomeFr",it.toString())
             }
@@ -127,11 +136,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView(root:View) {
-
         dialog = SpotsDialog.Builder().setContext(context).setCancelable(false).build()
         dialog.show()
         recycler_menu = root.findViewById(R.id.recycler_menu2) as RecyclerView
         recycler_menu!!.setHasFixedSize(true)
+        recommendTextView = root.findViewById(R.id.recommendTV) as TextView
         val staggeredGridLayoutManager = StaggeredGridLayoutManager(2,RecyclerView.VERTICAL)
         val layoutManager = GridLayoutManager(context,2)
         layoutManager.orientation = RecyclerView.VERTICAL
@@ -162,7 +171,7 @@ class HomeFragment : Fragment() {
         recyclerView = root.findViewById(R.id.recycler_popular) as RecyclerView
         recyclerView!!.setHasFixedSize(true)
         recyclerView!!.layoutManager = LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
-        loadRecommendation()
+        recommendTextView
 
 
     }
