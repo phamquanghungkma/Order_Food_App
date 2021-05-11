@@ -113,6 +113,7 @@ class HomeFragment : Fragment() {
             recycler_menu!!.layoutAnimation = layoutAnimationController
         })
 
+
         return root
     }
 

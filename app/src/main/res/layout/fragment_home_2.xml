@@ -89,10 +89,9 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:paddingTop="10dp"
-                android:id="@+id/recycler_menu2"
+                android:id="@+id/recycler_recommend"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 />
 
         </LinearLayout>
