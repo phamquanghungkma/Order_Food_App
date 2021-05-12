@@ -45,15 +45,6 @@
                     android:text="Name of food"
                     android:textColor="@android:color/white"
                     android:textSize="20sp"/>
-                <TextView
-                    android:id="@+id/txt_food_recommend_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/brandon_medium"
-                    android:text="100$"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    />
 
             </LinearLayout>
 

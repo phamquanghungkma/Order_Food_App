@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.tofukma.orderapp.Adapter.MyBestDealsAdapter
 import com.tofukma.orderapp.Adapter.MyCategoriesBestAdatper
+import com.tofukma.orderapp.Adapter.MyFoodRecommendListAdapter
 
 import com.tofukma.orderapp.Adapter.MyPopularCategoriesAdapter
 import com.tofukma.orderapp.EventBus.MenuItemBack
@@ -89,6 +90,9 @@ class HomeFragment : Fragment() {
 
             } else {
                 Log.d("HomeFr",it.toString())
+                val adapter = MyFoodRecommendListAdapter(context!!,it)
+                recycler_menu!!.adapter = adapter
+
             }
 
 
@@ -108,7 +112,6 @@ class HomeFragment : Fragment() {
     private fun initView(root:View) {
         dialog = SpotsDialog.Builder().setContext(context).setCancelable(false).build()
         dialog.show()
-        recycler_menu = root.findViewById(R.id.recycler_menu2) as? RecyclerView
         val staggeredGridLayoutManager = StaggeredGridLayoutManager(2,RecyclerView.VERTICAL)
         val layoutManager = GridLayoutManager(context,2)
         layoutManager.orientation = RecyclerView.VERTICAL
@@ -140,6 +143,11 @@ class HomeFragment : Fragment() {
         recyclerView!!.setHasFixedSize(true)
         recyclerView!!.layoutManager = LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
         recommendTextView = root.findViewById(R.id.recommendTV)
+
+        recycler_menu = root.findViewById(R.id.recycler_recommend) as? RecyclerView
+        recycler_menu!!.setHasFixedSize(true)
+        recycler_menu!!.layoutManager = LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
+
     }
 
     override fun onResume() {
