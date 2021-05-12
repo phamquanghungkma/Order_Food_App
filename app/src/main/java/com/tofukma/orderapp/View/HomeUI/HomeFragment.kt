@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.widget.TextView
-import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,10 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.asksira.loopingviewpager.LoopingViewPager
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.tofukma.orderapp.Adapter.MyBestDealsAdapter
 import com.tofukma.orderapp.Adapter.MyCategoriesBestAdatper
 
@@ -33,11 +28,7 @@ import com.tofukma.orderapp.R
 import com.tofukma.orderapp.ViewModel.home.HomeViewModel
 import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
-import kotlinx.android.synthetic.main.fragment_home_2.*
 import org.greenrobot.eventbus.EventBus
-import org.w3c.dom.Text
-import java.time.LocalDate
-import kotlin.reflect.typeOf
 
 class HomeFragment : Fragment() {
 
@@ -45,13 +36,12 @@ class HomeFragment : Fragment() {
     private lateinit var dialog: AlertDialog
     private var recycler_menu: RecyclerView?= null
 
-
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
 
     var recyclerView:RecyclerView ?= null
     var viewPager:LoopingViewPager ?= null
-    var recommendTextView: TextView ?= null
+    var recommendTextView: TextView?= null
 
     var layoutAnimationController:LayoutAnimationController ?= null
 
@@ -70,7 +60,6 @@ class HomeFragment : Fragment() {
 
 //        unbinder = ButterKnife.bind(this,root)
         initView(root)
-
         // Bind Data
         homeViewModel.getPopularList(key).observe(this, Observer {
             val listData = it
@@ -80,22 +69,22 @@ class HomeFragment : Fragment() {
         })
 
         homeViewModel.getBestDealList(key).observe(this, Observer {
+
             val adapter = MyBestDealsAdapter(context!!,it,false)
             viewPager!!.adapter = adapter
-            viewPager!!.layoutAnimation = layoutAnimationController
 
         })
-//        homeViewModel.getRecommenndList().observe(this, Observer {
-//            Log.d("Call123","Recommend List")
-//        })
+
         homeViewModel.loadRecommendList()
         homeViewModel.listRecomnend.observe(this, Observer {
             //data lay dc o day roi nha
-           //xong roi
-           //
+            //xong roi
+            //
+            dialog.dismiss()
             if(it.isNullOrEmpty()){
                 Log.d("HomeFr","data null")
                 recommendTextView!!.visibility = View.INVISIBLE
+                recycler_menu?.visibility = View.INVISIBLE
 
 
             } else {
@@ -106,42 +95,20 @@ class HomeFragment : Fragment() {
         })
 
         // Binding data hay là lắng nghe sự thay đổi dữ liệu rồi truyển vào view
-        menuViewModel.getCategoryBestList().observe(this, Observer {
-            dialog.dismiss()
-            adapter = MyCategoriesBestAdatper(context!!,it)
-            recycler_menu!!.adapter = adapter
-            recycler_menu!!.layoutAnimation = layoutAnimationController
-        })
-
+//        menuViewModel.getCategoryBestList().observe(this, Observer {
+//            dialog.dismiss()
+//            adapter = MyCategoriesBestAdatper(context!!,it)
+//            recycler_menu!!.adapter = adapter
+//            recycler_menu!!.layoutAnimation = layoutAnimationController
+//        })
 
         return root
-    }
-
-    private fun loadRecommendation(){
-        FirebaseDatabase.getInstance().getReference(Common.RECOMMENDATION_REF)
-            .child(Common.currentRestaurant!!.uid)
-            .child(Common.RECOMMENDATION_REF)
-            .addListenerForSingleValueEvent(object: ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-                    Log.d("Loi",p0.toString())
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    for(item in p0!!.children){
-                        Log.d("Data",item.toString())
-                    }
-
-                }
-
-            })
     }
 
     private fun initView(root:View) {
         dialog = SpotsDialog.Builder().setContext(context).setCancelable(false).build()
         dialog.show()
-        recycler_menu = root.findViewById(R.id.recycler_menu2) as RecyclerView
-        recycler_menu!!.setHasFixedSize(true)
-        recommendTextView = root.findViewById(R.id.recommendTV) as TextView
+        recycler_menu = root.findViewById(R.id.recycler_menu2) as? RecyclerView
         val staggeredGridLayoutManager = StaggeredGridLayoutManager(2,RecyclerView.VERTICAL)
         val layoutManager = GridLayoutManager(context,2)
         layoutManager.orientation = RecyclerView.VERTICAL
@@ -159,12 +126,12 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-        recycler_menu!!.layoutManager = staggeredGridLayoutManager
-        recycler_menu!!.addItemDecoration(
-            SpacesItemDecoration(
-                8
-            )
-        )
+//        recycler_menu!!.layoutManager = staggeredGridLayoutManager
+//        recycler_menu!!.addItemDecoration(
+//            SpacesItemDecoration(
+//                8
+//            )
+//        )
 
 
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(context,R.anim.layout_item_from_left)
@@ -172,9 +139,7 @@ class HomeFragment : Fragment() {
         recyclerView = root.findViewById(R.id.recycler_popular) as RecyclerView
         recyclerView!!.setHasFixedSize(true)
         recyclerView!!.layoutManager = LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
-        recommendTextView
-
-
+        recommendTextView = root.findViewById(R.id.recommendTV)
     }
 
     override fun onResume() {
