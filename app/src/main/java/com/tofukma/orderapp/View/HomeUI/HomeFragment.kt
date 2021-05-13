@@ -30,6 +30,7 @@ import com.tofukma.orderapp.ViewModel.home.HomeViewModel
 import com.tofukma.orderapp.ViewModel.menu.MenuViewModel
 import dmax.dialog.SpotsDialog
 import org.greenrobot.eventbus.EventBus
+import kotlin.reflect.typeOf
 
 class HomeFragment : Fragment() {
 
@@ -77,6 +78,8 @@ class HomeFragment : Fragment() {
         })
 
         homeViewModel.loadRecommendList()
+        var value = homeViewModel.listRecomnend.value
+
         homeViewModel.listRecomnend.observe(this, Observer {
             //data lay dc o day roi nha
             //xong roi
@@ -89,22 +92,14 @@ class HomeFragment : Fragment() {
 
 
             } else {
-                Log.d("HomeFr",it.toString())
+//                Log.d("HomeFr", )
                 val adapter = MyFoodRecommendListAdapter(context!!,it)
                 recycler_menu!!.adapter = adapter
-
             }
 
 
         })
 
-        // Binding data hay là lắng nghe sự thay đổi dữ liệu rồi truyển vào view
-//        menuViewModel.getCategoryBestList().observe(this, Observer {
-//            dialog.dismiss()
-//            adapter = MyCategoriesBestAdatper(context!!,it)
-//            recycler_menu!!.adapter = adapter
-//            recycler_menu!!.layoutAnimation = layoutAnimationController
-//        })
 
         return root
     }
@@ -129,12 +124,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-//        recycler_menu!!.layoutManager = staggeredGridLayoutManager
-//        recycler_menu!!.addItemDecoration(
-//            SpacesItemDecoration(
-//                8
-//            )
-//        )
 
 
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(context,R.anim.layout_item_from_left)

@@ -37,7 +37,6 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
     {
         if(recommendListMutableLiveData == null){
             loadRecommendList()
-            Log.d("Test","ok")
         }
        /// return recommendListMutableLiveData!!
     }
@@ -56,15 +55,12 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
-                    Log.d("hung",Common.currentUser!!.uid!!)
                     for (pos in p0.children){
                         val model=pos.getValue(RecommendModel::class.java)
-                        Log.d("hung1",model!!.food_id.toString())
                         listTest.add(model!!)
 
                     }
                     listRecomnend.value=listTest
-                    Log.d("phuc","$listTest")
                 }
 
             })

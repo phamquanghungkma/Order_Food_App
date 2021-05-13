@@ -491,7 +491,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                 val dataSend = HashMap<String,String>()
                                 // format thông báo đc gửi đi
                                 dataSend.put(Common.NOTI_TITLE," Đơn mới ")
-                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.phone)
+                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name)
 
                                 val sendData = FCMSendData(Common.getNewOrderTopic(),dataSend)
 

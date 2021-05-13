@@ -433,12 +433,67 @@ class HomeActivity : AppCompatActivity() {
                 })
         }
     }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onRecommendFoodItemClick(event: RecommendFoodItemClick){
+        if(event.foodRecommendList != null) {
+            dialog!!.show()
+            FirebaseDatabase.getInstance()
+                .getReference(Common.RESTAURANT_REF)
+                .child(Common.currentRestaurant!!.uid)
+                .child(Common.CATEGORY_REF)
+                .child(event.foodRecommendList!!.menu_id!!)
+                .addListenerForSingleValueEvent(object: ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        dialog!!.show()
+                        Toast.makeText(this@HomeActivity, ""+error.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists()){
+                            Common.categorySelected = snapshot.getValue(CategoryModel::class.java)
+                            Common.categorySelected!!.menu_id = snapshot.key
+                            //Load food
+                            FirebaseDatabase.getInstance()
+                                .getReference(Common.RESTAURANT_REF)
+                                .child(Common.currentRestaurant!!.uid)
+                                .child(Common.CATEGORY_REF)
+                                .child(event.foodRecommendList!!.menu_id!!)
+                                .child("foods")
+                                .orderByChild("id")
+                                .equalTo(event.foodRecommendList.food_id)
+                                .limitToLast(1)
+                                .addListenerForSingleValueEvent(object:ValueEventListener{
+                                    override fun onCancelled(error: DatabaseError) {
+                                        dialog!!.show()
+                                        Toast.makeText(this@HomeActivity, ""+error.message, Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        if(snapshot.exists()){
+                                            for (foodSnapShot in snapshot.children){
+                                                Common.foodSelected = foodSnapShot.getValue(FoodModel::class.java)
+                                                Common.foodSelected!!.key = foodSnapShot.key
+                                            }
+                                            navController!!.navigate(R.id.nav_food_detail)
+                                        }else{
+                                            Toast.makeText(this@HomeActivity,"Item doesn't exists", Toast.LENGTH_SHORT).show()
+                                        }
+                                        dialog!!.dismiss()
+                                    }
+
+                                })
+                        }
+                    }
+
+                })
+        }
+    }
+
 // Xu ly su kien an vao nut BestDealFoodItemClick
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     fun onBestDealFoodItemClick(event: BestDealItemClick){
         if(event.model != null ){
             dialog!!.show()
-
             FirebaseDatabase.getInstance()
                 .getReference(Common.RESTAURANT_REF)
                 .child(Common.currentRestaurant!!.uid)
