@@ -512,6 +512,7 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+
     @Subscribe(sticky = true,threadMode =  ThreadMode.MAIN)
     public fun onRestaurantClick(event:MenuItemEvent){
         val bundle  = Bundle()

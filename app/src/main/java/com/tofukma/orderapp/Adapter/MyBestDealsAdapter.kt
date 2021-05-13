@@ -2,6 +2,7 @@ package com.tofukma.orderapp.Adapter
 
 import android.content.Context
 import android.media.Image
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,7 @@ class MyBestDealsAdapter(context: Context,itemList: List<BestDealModel>, isInfin
         //set data
         Glide.with(context).load(itemList[listPosition].image).into(imageView)
 //        textView.text = itemList[listPosition].name
-
+            Log.d("Best",itemList[listPosition].image.toString())
         convertView.setOnClickListener{
             EventBus.getDefault().postSticky(BestDealItemClick(itemList[listPosition]))
         }

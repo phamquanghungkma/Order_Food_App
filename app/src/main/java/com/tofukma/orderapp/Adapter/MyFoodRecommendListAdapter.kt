@@ -13,7 +13,6 @@ import com.tofukma.orderapp.CallBack.IRecyclerItemClickListener
 import com.tofukma.orderapp.Database.CartDataSource
 import com.tofukma.orderapp.Database.CartDatabase
 import com.tofukma.orderapp.Database.LocalCartDataSource
-import com.tofukma.orderapp.EventBus.PopularFoodItemClick
 import com.tofukma.orderapp.EventBus.RecommendFoodItemClick
 import com.tofukma.orderapp.Model.RecommendModel
 import com.tofukma.orderapp.R
