@@ -329,8 +329,6 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                     edt_address.setText(t)
                                     currentLocation.longitude = task.result!!.longitude
                                     currentLocation.latitude = task.result!!.latitude
-                                    Log.d("homeVitri",currentLocation.longitude.toString())
-                                    Log.d("homeVitri",currentLocation.latitude.toString())
 
                                 }
 
@@ -431,9 +429,6 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                             order.shippingAddress = address
                             order.comment = comment
                             if(currentLocation != null) {
-                                Log.d("currentLocation", currentLocation.latitude.toString())
-                                Log.d("currentLocation", currentLocation.longitude.toString())
-
                                 order.lat = currentLocation!!.latitude
                                 order.lng = currentLocation!!.longitude
                             }
@@ -492,6 +487,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                 // format thông báo đc gửi đi
                                 dataSend.put(Common.NOTI_TITLE," Đơn mới ")
                                 dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name)
+//                                dataSend.put(Common.NOTI_CONTENT,"Đơn đó là ")
 
                                 val sendData = FCMSendData(Common.getNewOrderTopic(),dataSend)
 
@@ -501,12 +497,12 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                     .subscribe({t:FCMResponse? ->
                                         if(t!!.success != 0)
                                             Toast.makeText(context!!,"Đặt hàng thành công ",Toast.LENGTH_LONG).show()
-                                            Log.d("dathang","Success")
+
                                     },{
                                             throwable: Throwable ->
                                         throwable.printStackTrace()
-                                        Toast.makeText(context!!,"Thoong bao loi ",Toast.LENGTH_LONG).show()
-                                        Log.d("dathang","Failed")
+                                        Toast.makeText(context!!,"Thông báo lỗi ",Toast.LENGTH_LONG).show()
+
 
                                     }))
 

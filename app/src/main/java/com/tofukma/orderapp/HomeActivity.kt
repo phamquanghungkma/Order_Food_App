@@ -584,8 +584,6 @@ class HomeActivity : AppCompatActivity() {
     @Subscribe(sticky = true,threadMode =  ThreadMode.MAIN)
     public fun onInflateMenu(event:MenuInflateEvent){
         navView!!.menu.clear()
-
-
         if(event.isShowDetail)
             navView!!.inflateMenu(R.menu.restaurant_detail_menu)
         else

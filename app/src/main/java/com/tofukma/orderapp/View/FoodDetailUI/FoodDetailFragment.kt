@@ -124,7 +124,6 @@ class FoodDetailFragment : Fragment(), TextWatcher {
             .push().setValue(commentModel)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-
                     addRatingToFood(commentModel!!.ratingValue.toDouble())
                 } else {
                     waitingDialog!!.dismiss()

@@ -250,7 +250,7 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                 //Tracking Buuton
 
                 buffer.add(MyButton(context!!,
-                    "Tracking Order ",
+                    "Kiểm tra",
                     30,
                     0,
                     Color.parseColor("#001970"),
@@ -271,7 +271,7 @@ class ViewOrderFragment : Fragment(), ILoadOrderCallbackListener {
                                         override fun onDataChange(p0: DataSnapshot) {
                                          //   Log.d("TEst", p0.exists().toString())
                                         if(p0.exists()){
-                                        Common.currentShippingOrder = p0.getValue(ShippingOrderModel::class.java)
+                                            Common.currentShippingOrder = p0.getValue(ShippingOrderModel::class.java)
                                             Common.currentShippingOrder!!.key = p0.key
                                             if(Common.currentShippingOrder!!.currentLat!! != -1.0
                                                 && Common.currentShippingOrder!!.currentLng!! != -1.0){

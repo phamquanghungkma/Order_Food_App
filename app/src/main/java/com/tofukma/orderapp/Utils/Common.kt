@@ -37,6 +37,7 @@ object Common {
 
 
     var currentRestaurant: RestaurantModel ?= null
+    val BESTRATING: String = "BestRating"
     val RECOMMENDATION_REF: String = "Recommend"
     val RESTAURANT_REF: String= "Restaurant"
     val IMAGE_URL: String = "IMAGE_URL"
@@ -190,7 +191,6 @@ object Common {
     }
 
     fun getNewOrderTopic(): String {
-
         return StringBuilder("/topics/")
             .append(Common.currentRestaurant!!.uid)
             .append("_")

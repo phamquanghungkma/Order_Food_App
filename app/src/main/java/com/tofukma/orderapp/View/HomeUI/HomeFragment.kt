@@ -78,8 +78,8 @@ class HomeFragment : Fragment() {
         })
 
         homeViewModel.loadRecommendList()
-        var value = homeViewModel.listRecomnend.value
-
+        homeViewModel.loadHighRatingList()
+        var valueHight = homeViewModel.listRating
         homeViewModel.listRecomnend.observe(this, Observer {
             //data lay dc o day roi nha
             //xong roi
@@ -89,7 +89,7 @@ class HomeFragment : Fragment() {
                 Log.d("HomeFr","data null")
                 recommendTextView!!.visibility = View.INVISIBLE
                 recycler_menu?.visibility = View.INVISIBLE
-
+                Log.d("rating", valueHight.toString())
 
             } else {
 //                Log.d("HomeFr", )

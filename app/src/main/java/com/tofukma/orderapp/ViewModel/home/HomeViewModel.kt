@@ -11,6 +11,7 @@ import com.google.firebase.database.ValueEventListener
 import com.tofukma.orderapp.CallBack.IBestDealLoadCallBack
 import com.tofukma.orderapp.CallBack.IPopularLoadCallBack
 import com.tofukma.orderapp.Model.BestDealModel
+import com.tofukma.orderapp.Model.HighRatingModel
 import com.tofukma.orderapp.Model.PopularCategoryModel
 import com.tofukma.orderapp.Model.RecommendModel
 import com.tofukma.orderapp.Utils.Common
@@ -58,10 +59,46 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
                     for (pos in p0.children){
                         val model=pos.getValue(RecommendModel::class.java)
                         listTest.add(model!!)
-
                     }
                     listRecomnend.value=listTest
                 }
+
+            })
+    }
+    // High Rating
+    var listRating= mutableListOf<HighRatingModel>()
+    var listHighRating = MutableLiveData<MutableList<HighRatingModel>>()
+    fun loadHighRatingList() {
+
+       val dataFirebase= FirebaseDatabase.getInstance().getReference("Restaurant")
+           .child(Common.currentRestaurant!!.uid)
+           .child("BestRating")
+        var query=dataFirebase.limitToFirst(3)
+            query.addValueEventListener(object : ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                   // Log.d("listRate","$p0")
+                    for (pos in p0.children){
+                        var model=pos.getValue(HighRatingModel::class.java)
+                        var objectModel=HighRatingModel(
+                            pos.child("food_id").value.toString(),
+                            pos.child("image").value.toString(),
+                            pos.child("menu_id").value.toString(),
+                            pos.child("name").value.toString()
+
+                        )
+                        Log.d("listRate","${pos.child("food_id").value.toString()}")
+                       listRating.add(objectModel)
+                    }
+
+
+
+                }
+
+
 
             })
     }
