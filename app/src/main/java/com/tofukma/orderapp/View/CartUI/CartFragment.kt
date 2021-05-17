@@ -17,7 +17,6 @@ import android.view.animation.LayoutAnimationController
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -26,18 +25,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.asksira.loopingviewpager.LoopingViewPager
 import com.braintreepayments.api.dropin.DropInRequest
 import com.braintreepayments.api.dropin.DropInResult
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
-import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.JsonObject
 import com.tofukma.orderapp.Adapter.MyCartAdapter
 import com.tofukma.orderapp.CallBack.ILoadTimeFromFirebaseCallBack
 import com.tofukma.orderapp.CallBack.IMyButtonCallback
@@ -67,16 +62,15 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.layout_cart_item.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.json.JSONObject
 import java.io.IOException
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
+
 
 
 class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
@@ -95,7 +89,6 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
     override fun onLoadTimeSuccess(order: Order, estimatedTimeMs: Long) {
         order.createDate = estimatedTimeMs
-        Log.d("Date", order.createDate.toString())
         order.orderStatus = 0
         pushOrderToServer(order)
 
@@ -468,6 +461,13 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
     }
 
     private fun pushOrderToServer(order: Order) {
+        var foodNames = StringBuilder()
+
+        for(item in order.carItemList!!){
+            foodNames.append(item.foodQuantity)
+            foodNames.append(item.foodName)
+            foodNames.append(" + ")
+        }
         FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
             .child(Common.currentRestaurant!!.uid)
             .child(Common.ORDER_REF)
@@ -484,17 +484,22 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                         .subscribe(object: SingleObserver<Int>{
                             override fun onSuccess(t: Int) {
 
-                                val dataSend = HashMap<String,String>()
-//                                val dataSend = JsonObject()
-//                                val dataContent = JsonObject()
-//                                dataContent.addProperty(Common.NOTI_TITLE," Đơn mới")
-//                                dataContent.addProperty(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name)
-//                                dataContent.addProperty("Đơn đó là ","abc")
+                                val dataSend = HashMap<String,StringBuilder>()
                                 // format thông báo đc gửi đi
-                                dataSend.put(Common.NOTI_TITLE," Đơn mới ")
-                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name + "Đơn đó là các món ăn" +
-                                        "Gồm như sau ......")
-//                                dataSend.put(Common.NOTI_CONTENT,"Đơn đó là ")
+                                dataSend.put(Common.NOTI_TITLE, StringBuilder(" Đơn mới "))
+
+//                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name + " Đơn đó là các món ăn " +
+//                                        " Gồm như sau ......")
+                                var data = StringBuilder()
+                                data.append("Bạn có đơn đặt hàng mới từ :" )
+                                data.append(Common.currentUser!!.name)
+                                data.appendln("Chi tiet don hang la !")
+
+                                dataSend.put(Common.NOTI_CONTENT,data)
+//                                dataSend.put("detail", StringBuilder("ma don hang la :").append(foodNames))
+                                dataSend.put("detail", StringBuilder("ma don hang la :").append("mot hai ha "))
+
+
 
                                 val sendData = FCMSendData(Common.getNewOrderTopic(),dataSend)
 

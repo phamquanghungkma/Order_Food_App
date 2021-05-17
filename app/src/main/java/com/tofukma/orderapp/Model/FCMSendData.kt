@@ -1,6 +1,6 @@
 package com.tofukma.orderapp.Model
 
-import com.google.gson.JsonObject
+import java.lang.StringBuilder
 
-class FCMSendData (var to:String, var data:Map<String,String>)
+class FCMSendData(var to:String, var data: HashMap<String, StringBuilder>)
 //class FCMSendData (var to:String, var data: JsonObject)
