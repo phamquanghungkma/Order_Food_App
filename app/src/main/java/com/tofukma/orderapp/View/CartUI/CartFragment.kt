@@ -468,6 +468,15 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
             foodNames.append(item.foodName)
             foodNames.append(" + ")
         }
+
+        var customer = order.userName
+        var phoneNumber = order.userPhone
+        var totalPayment = order.finalPayment
+        var address = order.shippingAddress
+
+
+
+
         FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
             .child(Common.currentRestaurant!!.uid)
             .child(Common.ORDER_REF)
