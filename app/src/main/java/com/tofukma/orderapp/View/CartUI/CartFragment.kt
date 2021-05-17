@@ -37,6 +37,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.JsonObject
 import com.tofukma.orderapp.Adapter.MyCartAdapter
 import com.tofukma.orderapp.CallBack.ILoadTimeFromFirebaseCallBack
 import com.tofukma.orderapp.CallBack.IMyButtonCallback
@@ -70,6 +71,7 @@ import kotlinx.android.synthetic.main.layout_cart_item.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.json.JSONObject
 import java.io.IOException
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
@@ -295,8 +297,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                     edt_address.setText(Common.currentUser!!.addrss!!)
                     currentLocation.latitude = Common.currentUser!!.lat
                     currentLocation.longitude = Common.currentUser!!.lng
-                    Log.d("homeVitri",currentLocation.longitude.toString())
-                    Log.d("homeVitri",currentLocation.latitude.toString())
+
 
                 }
 
@@ -484,12 +485,19 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                             override fun onSuccess(t: Int) {
 
                                 val dataSend = HashMap<String,String>()
+//                                val dataSend = JsonObject()
+//                                val dataContent = JsonObject()
+//                                dataContent.addProperty(Common.NOTI_TITLE," Đơn mới")
+//                                dataContent.addProperty(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name)
+//                                dataContent.addProperty("Đơn đó là ","abc")
                                 // format thông báo đc gửi đi
                                 dataSend.put(Common.NOTI_TITLE," Đơn mới ")
-                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name)
+                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name + "Đơn đó là các món ăn" +
+                                        "Gồm như sau ......")
 //                                dataSend.put(Common.NOTI_CONTENT,"Đơn đó là ")
 
                                 val sendData = FCMSendData(Common.getNewOrderTopic(),dataSend)
+
 
                                 compositeDisposable.add(ifcmService.sendNotification(sendData)
                                     .subscribeOn(Schedulers.io())
@@ -692,12 +700,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                 val estimatedServerTimeInMs = System.currentTimeMillis() + offset!! // them missing offset vao current time
                 val sdf = SimpleDateFormat("MMM dd yyyy, HH:mm")
                 val date = Date(estimatedServerTimeInMs)
-                Log.d("TofuKMA",""+sdf.format(date))
-                Log.d("TofuKMA1",""+estimatedServerTimeInMs)
-                if(estimatedServerTimeInMs is Long){
-                    Log.d("Type  ","Type is Long")
 
-                }
                 listener.onLoadTimeSuccess(order,estimatedServerTimeInMs)
             }
 
@@ -752,8 +755,7 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                                 order.shippingAddress = address
                                                 order.comment = comment
                                                 if(currentLocation != null) {
-                                                    Log.d("currentLocation", currentLocation.latitude.toString())
-                                                    Log.d("currentLocation", currentLocation.longitude.toString())
+
 
                                                     order.lat = currentLocation!!.latitude
                                                     order.lng = currentLocation!!.longitude
