@@ -464,15 +464,19 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
         var foodNames = StringBuilder()
 
         for(item in order.carItemList!!){
-            foodNames.append(item.foodQuantity)
-            foodNames.append(item.foodName)
-            foodNames.append(" + ")
+            foodNames.append(item.foodQuantity )
+            foodNames.append(item.foodName  + " + ")
         }
+        var foodNamesForm  = foodNames.subSequence(0,foodNames.length - 2)
+
+
+
 
         var customer = order.userName
         var phoneNumber = order.userPhone
         var totalPayment = order.finalPayment
         var address = order.shippingAddress
+        var orderKey = order.orderNumber
 
 
 
@@ -500,16 +504,14 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 //                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name + " Đơn đó là các món ăn " +
 //                                        " Gồm như sau ......")
                                 var data = StringBuilder()
-                                data.append("Bạn có đơn đặt hàng mới từ :" )
+                                data.append("Bạn có đơn đặt hàng mới từ : " )
                                 data.append(Common.currentUser!!.name)
-                                data.appendln("Chi tiet don hang la !")
 
                                 dataSend.put(Common.NOTI_CONTENT,data)
-//                                dataSend.put("detail", StringBuilder("ma don hang la :").append(foodNames))
-                                dataSend.put("detail", StringBuilder("ma don hang la :").append("mot hai ha "))
-
-
-
+                                dataSend.put("foodDetail",StringBuilder("Gồm các món: ").append(foodNamesForm))
+                                dataSend.put("phone",StringBuilder("Số điện thoại: ").append(phoneNumber))
+                                dataSend.put("totalPrice",StringBuilder("Giá tiền: ").append(totalPayment))
+                                dataSend.put("address",StringBuilder("Địa chỉ: ").append(address))
                                 val sendData = FCMSendData(Common.getNewOrderTopic(),dataSend)
 
 
