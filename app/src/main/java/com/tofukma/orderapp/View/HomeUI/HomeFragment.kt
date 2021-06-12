@@ -56,8 +56,6 @@ class HomeFragment : Fragment() {
         menuViewModel = ViewModelProviders.of(this).get(MenuViewModel::class.java)
 
         val root = inflater.inflate(R.layout.fragment_home_2, container, false)
-
-
         val key = arguments!!.getString("restaurant")
 
 //        unbinder = ButterKnife.bind(this,root)
@@ -69,7 +67,6 @@ class HomeFragment : Fragment() {
             recyclerView!!.adapter = adapter
             recyclerView!!.layoutAnimation = layoutAnimationController
         })
-
         homeViewModel.getBestDealList(key).observe(this, Observer {
 
             val adapter = MyBestDealsAdapter(context!!,it,false)
