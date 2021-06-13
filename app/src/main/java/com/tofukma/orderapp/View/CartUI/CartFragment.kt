@@ -264,25 +264,18 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
         btn_place_order = root.findViewById(R.id.btn_place_order) as Button
 
         // Event
-        btn_place_order.setOnClickListener{
+        fun doPlaceOrder() {
             val builder = AlertDialog.Builder(activity!!)
             builder.setTitle(" Địa chỉ nhận hàng  !")
-            // cho nay o dang muon lam gi??. hien thi view nay de len man hinh nay a?
-
             val view = LayoutInflater.from(activity).inflate(R.layout.layout_place_order,null)
-            // mainView.addView(view);
             val edt_address = view!!.findViewById<View>(R.id.edt_address) as EditText
             val edt_comment = view!!.findViewById<View>(R.id.edt_comment) as EditText
             val txt_address = view!!.findViewById<View>(R.id.txt_address_detail) as TextView
 
             val rdi_home = view!!.findViewById<View>(R.id.rdi_home_address) as RadioButton
-//            val rdi_other_address = view.findViewById<View>(R.id.rdi_other_address) as RadioButton
             val rdi_ship_to_this_address = view!!.findViewById<View>(R.id.rdi_ship_this_address) as RadioButton
-
             val rdi_cod = view!!.findViewById<View>(R.id.rdi_cod) as RadioButton
             val rdi_braintree = view!!.findViewById<View>(R.id.rdi_braintree) as RadioButton
-            // loi o day la do  activity!!.supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment) khong tim thay element nay tren view
-
             // Data
             edt_address.setText(Common.currentUser!!.addrss!!)
             rdi_home.setOnCheckedChangeListener{ compoundButton, b ->
@@ -290,19 +283,9 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                     edt_address.setText(Common.currentUser!!.addrss!!)
                     currentLocation.latitude = Common.currentUser!!.lat
                     currentLocation.longitude = Common.currentUser!!.lng
-
-
                 }
 
             }
-//            rdi_other_address.setOnCheckedChangeListener{ compoundButton, b ->
-//                if(b){
-//                    edt_address.setText("")
-//                    edt_address.setHint("")
-//                    txt_address.visibility = View.GONE
-//                }
-//
-//            }
             rdi_ship_to_this_address.setOnCheckedChangeListener{ compoundButton, b ->
                 if(b){
                     fusedLocationProviderClient!!.lastLocation
@@ -319,20 +302,14 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                             val singleAddress = Single.just(getAddressFromLatLng(task.result!!.latitude,task.result!!.longitude))
                             val disposable = singleAddress.subscribeWith(object:DisposableSingleObserver<String>(){
                                 override fun onSuccess(t: String) {
-
                                     edt_address.setText(t)
                                     currentLocation.longitude = task.result!!.longitude
                                     currentLocation.latitude = task.result!!.latitude
-
                                 }
-
                                 override fun onError(e: Throwable) {
-
                                     edt_address.setText(e.message!!)
                                 }
                             })
-
-
 
                         }
                 }
@@ -362,54 +339,31 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                     }
                 })
 
-//            var fragmentAddress = AutocompleteSupportFragment.newInstance()
-//            if (fragmentAddress.view == null){
-//                print("Loi 1")
-//            } else {
-//                view.findViewById<LinearLayout>(R.id.oder_main_view).addView(fragmentAddress.view,0)
-//            }
-
             val dialog = builder.create()
             dialog.show()
+        }
 
-
-
-            //   fragmentAddress = this.activity!!.supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment) as AutocompleteSupportFragment
-            /*places_fragment = (context!! as FragmentActivity).supportFragmentManager.findFragmentById(R.id.places_autocomplete_fragment)
-                    as AutocompleteSupportFragment
-            */
-//            fragmentAddress!!.setPlaceFields(placeFields)
-//            fragmentAddress!!.setOnPlaceSelectedListener(object: PlaceSelectionListener {
-//                override fun onPlaceSelected(p0: Place) {
-//                    placeSelected = p0
-//                    txt_address.text = placeSelected!!.address
-//                }
-//
-//                override fun onError(p0: Status) {
-//                    Toast.makeText(context,""+p0.statusMessage,Toast.LENGTH_SHORT).show()            }
-//
-//
-//            })
+        btn_place_order.setOnClickListener{
+                doPlaceOrder()
         }
     }
 
     private fun paymentCOD(address: String, comment: String) {
-        compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid).subscribeOn(Schedulers.io())
+        compositeDisposable.add(cartDataSource!!.getAllCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                     cartItemList ->
                 // when we have all cartItem, we will get total price\
                 if (cartDataSource == null){
-
                     Log.d("LOI","do cartDataSource null");
                 }
                 if (Common.currentUser == null){
-
                     Log.d("LOI","do Common.currentUser null");
                 }
                 if (Common.currentUser!!.uid == null){
-
                     Log.d("LOI","do Common.currentUser.uid null");
                 }
+
                 cartDataSource!!.sumPrice(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -426,60 +380,41 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                 order.lat = currentLocation!!.latitude
                                 order.lng = currentLocation!!.longitude
                             }
-
                             order.carItemList = cartItemList
                             order.totalPayment = totalPrice
                             order.finalPayment = finalPrice
                             order.discount = 0
                             order.isCod = true
                             order.transactionId = "Thanh toán khi nhận hàng "
-
                             syncLocalTimeWithServerTime(order)
 
-
                         }
-
                         override fun onSubscribe(d: Disposable) {
                             Log.d("LOI","FIXED!!!")
                         }
-
                         override fun onError(e: Throwable) {
                             if(!e.message!!.contains("Query returned emtpy"))
                                 Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
                         }
-
-
                     })
-
-
             },{ throwable -> Toast.makeText(context!!,"BI LOI "+throwable.message,Toast.LENGTH_SHORT).show()
                 throwable.printStackTrace()
-                Log.d("LOI",throwable.message.toString())
             })
         )
-
     }
 
     private fun pushOrderToServer(order: Order) {
         var foodNames = StringBuilder()
-
         for(item in order.carItemList!!){
             foodNames.append(item.foodQuantity )
             foodNames.append(item.foodName  + " + ")
         }
         var foodNamesForm  = foodNames.subSequence(0,foodNames.length - 2)
-
-
-
-
         var customer = order.userName
         var phoneNumber = order.userPhone
         var totalPayment = order.finalPayment
         var address = order.shippingAddress
         var orderKey = order.orderNumber
-
-
-
 
         FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
             .child(Common.currentRestaurant!!.uid)
@@ -500,9 +435,6 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                                 val dataSend = HashMap<String,StringBuilder>()
                                 // format thông báo đc gửi đi
                                 dataSend.put(Common.NOTI_TITLE, StringBuilder(" Đơn mới "))
-
-//                                dataSend.put(Common.NOTI_CONTENT,"Bạn có đơn đặt hàng mới từ : "+Common.currentUser!!.name + " Đơn đó là các món ăn " +
-//                                        " Gồm như sau ......")
                                 var data = StringBuilder()
                                 data.append("Bạn có đơn đặt hàng mới từ : " )
                                 data.append(Common.currentUser!!.name)

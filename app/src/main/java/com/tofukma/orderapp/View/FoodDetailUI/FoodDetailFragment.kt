@@ -279,11 +279,8 @@ class FoodDetailFragment : Fragment(), TextWatcher {
             val commentFragment = CommentFragment.getInstance()
             commentFragment.show(activity!!.supportFragmentManager, "CommentFragment")
         }
-        btnCart!!.setOnClickListener {
-            Log.d("CHECKKK", "btnCart onClick")
-            val cartItem = CartItem()
+        fun addItemToCart(cartItem: CartItem) {
             cartItem.restaurantId = Common.currentRestaurant!!.uid
-
             cartItem.uid = Common.currentUser!!.uid
             cartItem.userPhone = Common.currentUser!!.phone
             cartItem.foodId = Common.foodSelected!!.id!!
@@ -306,19 +303,20 @@ class FoodDetailFragment : Fragment(), TextWatcher {
             else {
                 cartItem.foodSize = "Default"
             }
+        }
 
+        btnCart!!.setOnClickListener {
+            val cartItem = CartItem()
+            addItemToCart(cartItem)
             cartDataSource.getItemWithAllOptionsInCart(
                 Common.currentUser!!.uid!!,
                 cartItem.foodId,
                 cartItem.foodSize!!,
                 cartItem.foodAddon!!,
                 Common.currentRestaurant!!.uid
-            )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<CartItem> {
                     override fun onSuccess(cartItemFromDB: CartItem) {
-                        Log.d("CHECKKK", "getItem onSuccess")
                         if (cartItemFromDB.equals(cartItem)) {
                             //if item alreadly in database just update
                             cartItemFromDB.foodExtraPrice = cartItem.foodExtraPrice
@@ -361,23 +359,13 @@ class FoodDetailFragment : Fragment(), TextWatcher {
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({
-                                        Toast.makeText(
-                                            context,
-                                            "Thêm hàng thành công",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Toast.makeText(context, "Thêm hàng thành công", Toast.LENGTH_SHORT).show()
                                         //Here we will send a notify to HomeActivity to update CounterFab
                                         EventBus.getDefault().postSticky(CountCartEvent(true))
                                     }, { t: Throwable? ->
-                                        Toast.makeText(
-                                            context,
-                                            "(Thêm hàng)" + t!!.message,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Toast.makeText(context, "(Thêm hàng)" + t!!.message, Toast.LENGTH_SHORT).show()
                                     })
                             )
-
-
                         }
                     }
 
