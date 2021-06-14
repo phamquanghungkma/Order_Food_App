@@ -80,19 +80,19 @@ class HomeFragment : Fragment() {
         homeViewModel.loadRecommendList()
         homeViewModel.loadHighRatingList()
         var valueHight = homeViewModel.listRating
+
         homeViewModel.listRecomnend.observe(this, Observer {
             //data lay dc o day roi nha
             //xong roi
             //
             dialog.dismiss()
             if(it.isNullOrEmpty()){
-                Log.d("HomeFr","data null")
                 recommendTextView!!.visibility = View.INVISIBLE
                 recycler_menu?.visibility = View.INVISIBLE
-                Log.d("rating", valueHight.toString())
+
+
 
             } else {
-//                Log.d("HomeFr", )
                 val adapter = MyFoodRecommendListAdapter(context!!,it)
                 recycler_menu!!.adapter = adapter
             }

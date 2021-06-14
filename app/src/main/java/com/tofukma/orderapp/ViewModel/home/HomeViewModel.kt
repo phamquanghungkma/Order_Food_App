@@ -45,7 +45,7 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
     val listTest= mutableListOf<RecommendModel>()
     var listRecomnend=MutableLiveData<MutableList<RecommendModel>>()
      fun loadRecommendList() {
-        Log.d("current uid",Common.currentUser!!.uid.toString())
+
         FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
             .child(Common.currentRestaurant!!.uid)
             .child(Common.RECOMMENDATION_REF)
@@ -73,14 +73,13 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
        val dataFirebase= FirebaseDatabase.getInstance().getReference("Restaurant")
            .child(Common.currentRestaurant!!.uid)
            .child("BestRating")
-        var query=dataFirebase.limitToFirst(3)
-            query.addValueEventListener(object : ValueEventListener{
+//        var query=dataFirebase.limitToFirst(3)
+        dataFirebase.addValueEventListener(object : ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {
 
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
-                   // Log.d("listRate","$p0")
                     for (pos in p0.children){
                         var model=pos.getValue(HighRatingModel::class.java)
                         var objectModel=HighRatingModel(
@@ -88,17 +87,16 @@ class HomeViewModel : ViewModel(),IPopularLoadCallBack, IBestDealLoadCallBack{
                             pos.child("image").value.toString(),
                             pos.child("menu_id").value.toString(),
                             pos.child("name").value.toString()
-
                         )
                         Log.d("listRate","${pos.child("food_id").value.toString()}")
                        listRating.add(objectModel)
                     }
+                    listHighRating.value = listRating
+                    Log.d("listRating","${listHighRating.value}")
 
 
 
                 }
-
-
 
             })
     }
