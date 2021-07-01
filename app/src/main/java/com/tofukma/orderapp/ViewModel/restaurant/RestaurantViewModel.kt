@@ -16,9 +16,7 @@ class RestaurantViewModel : ViewModel(), IRestaurantCallbackListener {
     private var messageError: MutableLiveData<String> = MutableLiveData()
     private  val restaurantCallBackListener: IRestaurantCallbackListener
 
-    init {
-        restaurantCallBackListener = this
-    }
+    init { restaurantCallBackListener = this }
 
     fun getRestaurantList():MutableLiveData<List<RestaurantModel>>{
         if (restaurantsListMutable == null)
@@ -28,7 +26,6 @@ class RestaurantViewModel : ViewModel(), IRestaurantCallbackListener {
         }
         return restaurantsListMutable!!
     }
-
     private fun loadRestaurantFromFirebase() {
         val tempList = ArrayList<RestaurantModel>()
         val restaurantRef = FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)

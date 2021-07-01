@@ -29,11 +29,6 @@ import org.greenrobot.eventbus.EventBus
 
 class RestaurantFragment : Fragment() {
 
-    companion object {
-        fun newInstance() =
-            RestaurantFragment()
-    }
-
     private lateinit var dialog: AlertDialog
     private  lateinit var layoutAnimationController: LayoutAnimationController
     private var adapter: MyRestaurantAdapter?= null
@@ -53,6 +48,7 @@ class RestaurantFragment : Fragment() {
 
             Toast.makeText(context,it, Toast.LENGTH_SHORT).show()
         })
+        viewModel.getRestaurantList()
         viewModel.getRestaurantList().observe(this, Observer {
             dialog.dismiss()
             adapter = MyRestaurantAdapter(context!!, it)
@@ -64,24 +60,15 @@ class RestaurantFragment : Fragment() {
     }
 
     private fun initViews(root: View?) {
-
         EventBus.getDefault().postSticky(HideFABCart(true))
-
         setHasOptionsMenu(true)
-
         dialog = SpotsDialog.Builder().setContext(context).setCancelable(false).build()
         dialog.show()
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(context,R.anim.layout_item_from_left)
-
         recycler_restaurant = root!!.findViewById(R.id.recycler_restaurant) as RecyclerView
         recycler_restaurant!!.setHasFixedSize(true)
-//        val staggeredGridLayoutManager = StaggeredGridLayoutManager(1,RecyclerView.VERTICAL)
-//        val layoutManager = GridLayoutManager(context,1)
         val layoutManager = LinearLayoutManager(context)
-
         layoutManager.orientation = RecyclerView.VERTICAL
-
-//        recycler_restaurant!!.layoutManager = staggeredGridLayoutManager
         recycler_restaurant!!.layoutManager = layoutManager
         recycler_restaurant!!.addItemDecoration(DividerItemDecoration(context!!,layoutManager.orientation))
     }

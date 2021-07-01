@@ -60,7 +60,6 @@ class FoodDetailFragment : Fragment(), TextWatcher {
     private var rdi_group_size: RadioGroup? = null
     private var img_add_on: ImageView? = null
     private var chip_group_user_selected_addon: ChipGroup? = null
-
     //Addon layout
     private var chip_group_addon: ChipGroup? = null
     private var edt_search_addon: EditText? = null

@@ -1,6 +1,6 @@
-import com.tofukma.orderapp.Database.CartItem
+package com.tofukma.orderapp.Database
 
-artpackage com.tofukma.orderapp.Database
+
 import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Flowable
