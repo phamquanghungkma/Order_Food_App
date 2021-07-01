@@ -427,7 +427,8 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
                 //clean cart
                 if(task.isSuccessful){
-                    cartDataSource!!.cleanCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid).subscribeOn(Schedulers.io())
+                    cartDataSource!!.cleanCart(Common.currentUser!!.uid!!, Common.currentRestaurant!!.uid)
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(object: SingleObserver<Int>{
                             override fun onSuccess(t: Int) {
@@ -475,12 +476,9 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
 
 
                         })
-
                 }
 
-
             }
-
 
     }
 
