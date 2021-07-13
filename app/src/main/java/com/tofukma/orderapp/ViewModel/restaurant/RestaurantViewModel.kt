@@ -1,5 +1,6 @@
 package com.tofukma.orderapp.ViewModel.restaurant
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.DataSnapshot
@@ -35,9 +36,12 @@ class RestaurantViewModel : ViewModel(), IRestaurantCallbackListener {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists()){
+                 if(snapshot.exists()){
                 for (itemSnapShot in snapshot!!.children){
+                    Log.d("snapshotRES1", itemSnapShot.key.toString())
+
                     val model = itemSnapShot.getValue<RestaurantModel>(RestaurantModel::class.java)
+
                     model!!.uid = itemSnapShot.key!!
                     tempList.add(model!!)
                     }
