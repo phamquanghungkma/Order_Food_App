@@ -185,6 +185,7 @@ object Common {
             1 -> return "Đang vận chuyển"
             3 -> return "Đã Vận chuyển"
             -1 -> return "Hủy đơn"
+             2 -> return "Đã nhận"
 //            5 -> return "Lỗi đơn hàng"
             else -> return "Không xác định"
         }

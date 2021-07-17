@@ -394,10 +394,11 @@ class CartFragment : Fragment(),ILoadTimeFromFirebaseCallBack {
                         }
                         override fun onError(e: Throwable) {
                             if(!e.message!!.contains("Query returned emtpy"))
-                                Toast.makeText(context,"[SUM CART]"+e.message,Toast.LENGTH_SHORT).show()
+                                Log.d("LOI","[SUM CART]\"+e.message")
                         }
                     })
-            },{ throwable -> Toast.makeText(context!!,"BI LOI "+throwable.message,Toast.LENGTH_SHORT).show()
+            },{ throwable ->
+                Log.d("LOI","\"BI LOI \"+throwable.message")
                 throwable.printStackTrace()
             })
         )
